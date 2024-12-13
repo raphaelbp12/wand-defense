@@ -1,8 +1,11 @@
 using UnityEngine;
+using UnityEngine.Events;
 
-[RequireComponent(typeof(EntityHealth))]
 public class EnemyDeathHandler : MonoBehaviour
 {
+    public delegate void EnemyDied();
+    public event EnemyDied OnEnemyDied;
+
     private EntityHealth entityHealth;
 
     private void Awake()
@@ -16,8 +19,7 @@ public class EnemyDeathHandler : MonoBehaviour
 
     private void HandleEnemyDeath()
     {
-        // Perform any enemy-specific death actions (e.g., spawn loot, increase score)
-        // Then destroy the enemy object
+        OnEnemyDied?.Invoke();
         Destroy(gameObject);
     }
 }
