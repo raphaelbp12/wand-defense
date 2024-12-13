@@ -1,18 +1,14 @@
 using UnityEngine;
 
 [RequireComponent(typeof(EntityHealth))]
-[RequireComponent(typeof(EnemyMovementController))]
-public class Enemy : MonoBehaviour
+public class Tower : MonoBehaviour
 {
     private EntityHealth entityHealth;
-    private EnemyMovementController movementController;
-    public Transform towerTransform; // Assigned when spawned
 
     private void Awake()
     {
         // Get references to attached components
         entityHealth = GetComponent<EntityHealth>();
-        movementController = GetComponent<EnemyMovementController>();
     }
 
     private void Update()

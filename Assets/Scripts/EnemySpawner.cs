@@ -27,7 +27,7 @@ public class EnemySpawner : MonoBehaviour
         {
             Vector3 spawnPosition = GetRandomSpawnPoint();
             Enemy newEnemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
-            newEnemy.GetComponent<EnemyMovementController>().towerTransform = centerPoint;
+            newEnemy.towerTransform = centerPoint;
         }
     }
 
@@ -35,7 +35,7 @@ public class EnemySpawner : MonoBehaviour
     {
         // Pick a random angle in radians
         float angle = Random.Range(0f, Mathf.PI * 2f);
-        
+
         // Pick a random distance between min and max radius
         float distance = Random.Range(minSpawnRadius, maxSpawnRadius);
 

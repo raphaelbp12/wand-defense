@@ -8,8 +8,8 @@ public class PaintShape : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        meshRenderer = GetComponent<MeshRenderer>();    
-        meshRenderer.material.color = color;    
+        meshRenderer = GetComponent<MeshRenderer>();
+        meshRenderer.material.color = color;
     }
 
     void SetColor(Color newColor)
