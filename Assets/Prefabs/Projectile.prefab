@@ -166,10 +166,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b56ce9ad35d835343aba9a6f79d5fa2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isFilled: 1
+  isFilled: 0
   polygonSides: 3
   polygonOuterRadius: 0.1
-  polygonInnerRadius: 0
+  polygonInnerRadius: 0.05
 --- !u!114 &2998337350141401260
 MonoBehaviour:
   m_ObjectHideFlags: 0

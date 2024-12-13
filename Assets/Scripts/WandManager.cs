@@ -20,7 +20,7 @@ public class WandManager : MonoBehaviour
             return;
         }
 
-        wandSpawnOffset = Random.insideUnitCircle * offsetRadius;
+        wandSpawnOffset = new Vector3(offsetRadius, 0f, 0f);
         Vector3 spawnPosition = towerTransform.position + wandSpawnOffset;
         currentWand = Instantiate(wandPrefab, spawnPosition, Quaternion.identity);
         currentWand.towerTransform = towerTransform;
