@@ -80,6 +80,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 991f6b182a725ae4fa5e75104bef9e66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  OnTowerDied:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!33 &-2644176988002890671
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -197,6 +200,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b56ce9ad35d835343aba9a6f79d5fa2a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isFilled: 0
+  polygonSides: 4
+  polygonOuterRadius: 0.5
+  polygonInnerRadius: 0.1
 --- !u!114 &-3391299825462606706
 MonoBehaviour:
   m_ObjectHideFlags: 0

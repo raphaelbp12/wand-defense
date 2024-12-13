@@ -1,27 +1,26 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-[RequireComponent(typeof(EnemySpawner), typeof(WaveManager))]
+[RequireComponent(typeof(EnemySpawner), typeof(WaveManager), typeof(WandManager))]
 public class GameSceneManager : MonoBehaviour
 {
-
     [Header("References")]
     public Tower towerPrefab;
 
     private EnemySpawner enemySpawner;
     private WaveManager waveManager;
+    private WandManager wandManager;
     private Tower currentTower;
 
     private void Awake()
     {
         enemySpawner = GetComponent<EnemySpawner>();
         waveManager = GetComponent<WaveManager>();
+        wandManager = GetComponent<WandManager>();
     }
 
     private void Start()
     {
-        // If this is the main game scene, spawn tower and start round
-        // If this is a menu scene, we won't do this.
         if (SceneManager.GetActiveScene().name == "GameScene")
         {
             SpawnTower();
@@ -39,6 +38,10 @@ public class GameSceneManager : MonoBehaviour
         {
             deathHandler.OnTowerDied.AddListener(HandleTowerDeath);
         }
+
+        // Assign the tower transform to the WandManager and spawn the initial wand
+        wandManager.towerTransform = currentTower.transform;
+        wandManager.SpawnInitialWand();
     }
 
     public void StartRound()
@@ -53,19 +56,16 @@ public class GameSceneManager : MonoBehaviour
 
     public void EndGame()
     {
-        // Load the GameOver scene
         SceneManager.LoadScene("GameOverScene");
     }
 
     public void StartNewGame()
     {
-        // Called from Main Menu UI button
         SceneManager.LoadScene("GameScene");
     }
 
     public void GoToMainMenu()
     {
-        // Called from Game Over UI button
         SceneManager.LoadScene("MainMenuScene");
     }
 }

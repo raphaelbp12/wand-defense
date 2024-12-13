@@ -268,6 +268,7 @@ GameObject:
   - component: {fileID: 570702225}
   - component: {fileID: 570702227}
   - component: {fileID: 570702228}
+  - component: {fileID: 570702229}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -334,6 +335,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   totalWaves: 3
   timeBetweenWaves: 5
+--- !u!114 &570702229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 570702224}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d3abb6175fbcfd42b7eaaac26f61ff4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offsetRadius: 1
+  towerTransform: {fileID: 0}
+  wandPrefab: {fileID: 8950896102176921670, guid: cff97560d759dbd47b409fdd952858e2, type: 3}
+  wandSpawnOffset: {x: 2, y: 0, z: 0}
 --- !u!1 &619394800
 GameObject:
   m_ObjectHideFlags: 0

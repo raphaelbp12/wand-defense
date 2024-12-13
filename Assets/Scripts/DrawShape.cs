@@ -12,11 +12,11 @@ public class DrawShape : MonoBehaviour
     Vector3[] polygonPoints;
     int[] polygonTriangles;
 
-    public bool isFilled { get; private set; }
-    public int polygonSides { get; private set; }
+    public bool isFilled;
+    public int polygonSides;
 
-    public float polygonOuterRadius { get; private set; }
-    public float polygonInnerRadius { get; private set; }
+    public float polygonOuterRadius;
+    public float polygonInnerRadius;
 
     // Grid position where this shape was spawned
     public Vector3 gridPosition { get; private set; }
@@ -25,7 +25,7 @@ public class DrawShape : MonoBehaviour
     {
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
-        SetPolygon(12, 0.5f, 0.4f, false);
+        SetPolygon(polygonSides, polygonOuterRadius, polygonInnerRadius, isFilled);
     }
 
     // Update is called once per frame
