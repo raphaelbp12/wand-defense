@@ -1,19 +1,22 @@
 using UnityEngine;
 
-[RequireComponent(typeof(EnemySpawner))]
+[RequireComponent(typeof(EnemySpawner), typeof(WaveManager))]
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance;
 
     [Header("References")]
     public Tower towerPrefab;
-    private EnemySpawner enemySpawner;
 
+    private EnemySpawner enemySpawner;
+    private WaveManager waveManager;
     private Tower currentTower;
 
     private void Awake()
     {
         enemySpawner = GetComponent<EnemySpawner>();
+        waveManager = GetComponent<WaveManager>();
+
         if (Instance == null)
             Instance = this;
         else
@@ -23,22 +26,48 @@ public class GameManager : MonoBehaviour
     private void Start()
     {
         SpawnTower();
+        StartRound();
     }
 
     private void SpawnTower()
     {
-        // Instantiates the Tower at the origin
         currentTower = Instantiate(towerPrefab, Vector3.zero, Quaternion.identity);
-
-        // Assigns the Tower’s transform to the EnemySpawner so enemies know where to go
         enemySpawner.centerPoint = currentTower.transform;
+
+        // Subscribe to the tower's death event
+        TowerDeathHandler deathHandler = currentTower.GetComponent<TowerDeathHandler>();
+        if (deathHandler != null)
+        {
+            deathHandler.OnTowerDied.AddListener(HandleTowerDeath);
+        }
+    }
+
+    public void StartRound()
+    {
+        waveManager.StartRound();
+    }
+
+    private void HandleTowerDeath()
+    {
+        // Tower has died, end the game and restart
+        EndGame();
+        RestartGame();
+    }
+
+    public void EndGame()
+    {
+        Debug.Log("Game Over. Handle UI and score finalization here.");
+        // Stop spawning waves, show Game Over UI, etc.
     }
 
     public void RestartGame()
     {
-        // Logic to reset the game.
-        // For a quick test, just reload the current scene:
-        // UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
-        // Or implement another logic to clear enemies, respawn tower, etc.
+        Debug.Log("Restarting the game...");
+        // For a quick restart, reload the current scene:
+        // UnityEngine.SceneManagement.SceneManager.LoadScene(
+        //     UnityEngine.SceneManagement.SceneManager.GetActiveScene().name
+        // );
+
+        // Or implement custom logic to clear enemies, reset state, and call StartRound() again.
     }
 }

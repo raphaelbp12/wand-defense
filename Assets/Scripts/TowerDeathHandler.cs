@@ -1,8 +1,11 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 [RequireComponent(typeof(EntityHealth))]
 public class TowerDeathHandler : MonoBehaviour
 {
+    public UnityEvent OnTowerDied; // Invoked when the tower is destroyed
+
     private EntityHealth entityHealth;
 
     private void Awake()
@@ -16,12 +19,7 @@ public class TowerDeathHandler : MonoBehaviour
 
     private void HandleTowerDeath()
     {
-        // Run logic to restart the game
-        // For example, you might call GameManager.Instance.EndGame();
-        // or show a "Game Over" UI panel. For now, we’ll just log it.
-        Debug.Log("Tower destroyed. Restarting the game...");
-
-        // Example: Access GameManager to handle restart
-        // GameManager.Instance.RestartGame();
+        Debug.Log("Tower destroyed. Triggering OnTowerDied event...");
+        OnTowerDied.Invoke();
     }
 }
