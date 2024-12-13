@@ -50,7 +50,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   towerTransform: {fileID: 0}
-  attackInterval: 0.1
+  attackInterval: 0.3
   attackRange: 10
   projectileDamage: 10
   projectilePrefab: {fileID: 5681140562468967878, guid: 11d884faf9ff1ba46a1cce3ea05c8051, type: 3}

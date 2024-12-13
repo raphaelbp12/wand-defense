@@ -1,18 +1,21 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Collider2D))]
 public class Projectile : MonoBehaviour
 {
-    private Transform target;
+    private Vector3 direction;
     private int damage;
     private float speed;
 
-    // The maximum time (in seconds) the projectile will live before self-destructing.
     public float maxLifetime = 5f;
     private float lifetimeTimer = 0f;
 
-    public void Initialize(Transform target, int damage, float speed)
+    // Ensure the projectile's collider is set to "isTrigger = true"
+    // and that collision layers allow the projectile to detect enemies.
+
+    public void Initialize(Vector3 direction, int damage, float speed)
     {
-        this.target = target;
+        this.direction = direction.normalized;
         this.damage = damage;
         this.speed = speed;
     }
@@ -21,37 +24,31 @@ public class Projectile : MonoBehaviour
     {
         lifetimeTimer += Time.deltaTime;
 
-        // If the projectile has exceeded its lifetime, destroy it.
+        // Destroy if lifetime exceeded
         if (lifetimeTimer >= maxLifetime)
         {
             Destroy(gameObject);
             return;
         }
 
-        // If the target is lost, just move forward or self-destruct.
-        // For simplicity, if we lose the target, we can just destroy the projectile
-        // or in an advanced scenario, keep going straight. For now, let's destroy it.
-        if (target == null)
-        {
-            Destroy(gameObject);
-            return;
-        }
-
-        // Move towards the target
-        Vector3 direction = (target.position - transform.position).normalized;
+        // Move in the given direction
         transform.position += direction * speed * Time.deltaTime;
+    }
 
-        // Check if close enough to hit the target
-        float distance = Vector3.Distance(transform.position, target.position);
-        if (distance < 0.5f)
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        // Check if we've hit an enemy
+        Enemy enemy = other.GetComponent<Enemy>();
+        if (enemy != null)
         {
-            EntityHealth health = target.GetComponent<EntityHealth>();
+            // Deal damage to the enemy
+            EntityHealth health = enemy.GetComponent<EntityHealth>();
             if (health != null)
             {
                 health.TakeDamage(damage);
             }
 
-            // Destroy the projectile upon hitting the target
+            // Destroy the projectile after hitting an enemy
             Destroy(gameObject);
         }
     }

@@ -59,11 +59,16 @@ public class Wand : MonoBehaviour
     {
         if (projectilePrefab == null || target == null) return;
 
+        // Instantiate the projectile at the wand's current position
         GameObject projObj = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
         Projectile projectile = projObj.GetComponent<Projectile>();
         if (projectile != null)
         {
-            projectile.Initialize(target.transform, projectileDamage, projectileSpeed);
+            // Calculate direction from the wand to the enemy
+            Vector3 direction = (target.transform.position - transform.position).normalized;
+
+            // Initialize the projectile with a direction, damage, and speed
+            projectile.Initialize(direction, projectileDamage, projectileSpeed);
         }
     }
 }

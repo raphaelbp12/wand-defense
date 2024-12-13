@@ -1,7 +1,6 @@
 using UnityEngine;
 
-[RequireComponent(typeof(EntityHealth))]
-[RequireComponent(typeof(EnemyMovementController))]
+[RequireComponent(typeof(Collider2D), typeof(EnemyMovementController), typeof(EntityHealth))]
 public class Enemy : MonoBehaviour
 {
     private EntityHealth entityHealth;
