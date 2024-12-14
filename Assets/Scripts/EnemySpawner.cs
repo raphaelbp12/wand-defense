@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(WaveManager), typeof(CurrencyManager))]
 public class EnemySpawner : MonoBehaviour
 {
     [Header("Spawn Settings")]
@@ -43,9 +44,11 @@ public class EnemySpawner : MonoBehaviour
     {
         // Get reference to WaveManager and notify that an enemy is defeated
         WaveManager waveManager = GetComponent<WaveManager>();
+        CurrencyManager currencyManager = GetComponent<CurrencyManager>();
         if (waveManager != null)
         {
             waveManager.EnemyDefeated();
+            currencyManager.OnEnemyDied();
         }
     }
 }
