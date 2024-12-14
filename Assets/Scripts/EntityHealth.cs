@@ -3,6 +3,7 @@ using UnityEngine.Events;
 
 public class EntityHealth : MonoBehaviour
 {
+    public BarController healthBarController;
     public int maxHP;
     public int currentHP;
 
@@ -16,7 +17,10 @@ public class EntityHealth : MonoBehaviour
 
     private void Update()
     {
-        // TakeDamage(3);
+        if (healthBarController != null)
+        {
+            healthBarController.SetPercentage((float)currentHP / (float)maxHP);
+        }
     }
 
     public void TakeDamage(int amount)
