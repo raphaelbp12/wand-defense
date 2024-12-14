@@ -347,7 +347,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d3abb6175fbcfd42b7eaaac26f61ff4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offsetRadius: 1
+  offsetRadius: 0.5
   towerTransform: {fileID: 0}
   wandPrefab: {fileID: 8950896102176921670, guid: cff97560d759dbd47b409fdd952858e2, type: 3}
   wandSpawnOffset: {x: 2, y: 0, z: 0}

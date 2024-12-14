@@ -138,7 +138,7 @@ PolygonCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -154,11 +154,12 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0, y: 1}
-      - {x: -0.95105654, y: 0.30901697}
-      - {x: -0.5877852, y: -0.80901706}
-      - {x: 0.58778536, y: -0.80901694}
-      - {x: 0.9510565, y: 0.30901712}
+    - - {x: 0.1, y: 0}
+      - {x: -0.05000001, y: 0.08660254}
+      - {x: -0.049999993, y: -0.086602546}
+      - {x: 0.05, y: 0}
+      - {x: -0.025000004, y: 0.04330127}
+      - {x: -0.024999997, y: -0.043301273}
   m_UseDelaunayMesh: 0
 --- !u!114 &-7308216514042436404
 MonoBehaviour:
@@ -174,8 +175,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isFilled: 0
   polygonSides: 3
-  polygonOuterRadius: 0.2
-  polygonInnerRadius: 0.1
+  polygonOuterRadius: 0.1
+  polygonInnerRadius: 0.05
 --- !u!114 &-4927742292018940782
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -188,4 +189,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe1935235a19a484fbf1778df95550be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  color: {r: 0, g: 0, b: 0, a: 1}
+  color: {r: 0, g: 1, b: 0.6647056, a: 1}

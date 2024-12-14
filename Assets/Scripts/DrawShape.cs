@@ -3,9 +3,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(MeshFilter))]
-[RequireComponent(typeof(MeshRenderer))]
-[RequireComponent(typeof(PolygonCollider2D))]
+[ExecuteInEditMode]
+[RequireComponent(typeof(PolygonCollider2D), typeof(MeshRenderer), typeof(MeshFilter))]
 public class DrawShape : MonoBehaviour
 {
     Mesh mesh;
@@ -18,8 +17,8 @@ public class DrawShape : MonoBehaviour
     public float polygonOuterRadius;
     public float polygonInnerRadius;
 
-    // Grid position where this shape was spawned
-    public Vector3 gridPosition { get; private set; }
+    private PolygonCollider2D polygonCollider;
+    private MeshFilter meshFilter;
 
     void Start()
     {
@@ -28,8 +27,51 @@ public class DrawShape : MonoBehaviour
         SetPolygon(polygonSides, polygonOuterRadius, polygonInnerRadius, isFilled);
     }
 
-    // Update is called once per frame
-    void Update()
+    private void OnEnable()
+    {
+        // Ensure references are set when script is reloaded
+        meshFilter = GetComponent<MeshFilter>();
+        polygonCollider = GetComponent<PolygonCollider2D>();
+        if (meshFilter.sharedMesh == null)
+        {
+            mesh = new Mesh();
+            meshFilter.sharedMesh = mesh;
+        }
+        else
+        {
+            mesh = meshFilter.sharedMesh;
+        }
+
+        UpdateMesh();
+    }
+
+    void OnValidate()
+    {
+        // This method is called when values are changed in the inspector
+        // Ensures the shape updates in real-time
+        if (!Application.isPlaying)
+        {
+            if (mesh == null)
+            {
+                meshFilter = GetComponent<MeshFilter>();
+                mesh = new Mesh();
+                meshFilter.sharedMesh = mesh;
+            }
+            UpdateMesh();
+        }
+    }
+
+    private void Update()
+    {
+        // Even if we don't need runtime updates, 
+        // this ensures the shape remains correct if changed via code
+        if (Application.isPlaying)
+        {
+            UpdateMesh();
+        }
+    }
+
+    void UpdateMesh()
     {
         if (isFilled)
         {
@@ -49,11 +91,6 @@ public class DrawShape : MonoBehaviour
         polygonInnerRadius = innerRadius;
         isFilled = filled;
         SetPolygonCollider();
-    }
-
-    public void SetGridPosition(Vector3 position)
-    {
-        gridPosition = position;
     }
 
     void SetPolygonCollider()
