@@ -17,6 +17,8 @@ public class EnemySpawner : MonoBehaviour
             Vector3 spawnPosition = GetRandomSpawnPoint();
             Enemy newEnemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
             newEnemy.towerTransform = centerPoint;
+            newEnemy.waveIndex = waveIndex;
+
 
             // Subscribe to enemy death event
             EnemyDeathHandler deathHandler = newEnemy.GetComponent<EnemyDeathHandler>();
@@ -40,14 +42,18 @@ public class EnemySpawner : MonoBehaviour
         return new Vector3(x, y, z);
     }
 
-    private void HandleEnemyDeath()
+    private void HandleEnemyDeath(int waveIndex)
     {
         // Get reference to WaveManager and notify that an enemy is defeated
         WaveManager waveManager = GetComponent<WaveManager>();
         CurrencyManager currencyManager = GetComponent<CurrencyManager>();
         if (waveManager != null)
         {
-            waveManager.EnemyDefeated();
+            waveManager.EnemyDefeated(waveIndex);
+        }
+
+        if (currencyManager != null)
+        {
             currencyManager.OnEnemyDied();
         }
     }

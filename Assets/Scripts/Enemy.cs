@@ -6,6 +6,7 @@ public class Enemy : MonoBehaviour
     private EntityHealth entityHealth;
     private EnemyMovementController movementController;
     public Transform towerTransform; // Assigned when spawned
+    public int waveIndex;
 
     private void Awake()
     {

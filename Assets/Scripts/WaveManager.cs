@@ -11,13 +11,19 @@ public class WaveManager : MonoBehaviour
     private EnemySpawner enemySpawner;
     private bool roundInProgress = false;
 
-    // Track current wave and how many enemies are alive in that wave.
+    // Array that tracks how many enemies remain in each wave.
+    private int[] waveEnemiesRemaining;
+
+    // Keep track of which wave is currently spawning
     private int currentWaveIndex = -1;
-    private int enemiesAlive = 0;
 
     private void Awake()
     {
         enemySpawner = GetComponent<EnemySpawner>();
+
+        // Initialize array to hold remaining enemy counts per wave.
+        // If you have different spawn amounts for each wave, you might fill this array dynamically.
+        waveEnemiesRemaining = new int[totalWaves];
     }
 
     public void StartRound()
@@ -35,12 +41,11 @@ public class WaveManager : MonoBehaviour
         {
             currentWaveIndex = i;
 
-            // Spawn the current wave and get the number of enemies spawned
-            enemiesAlive = enemySpawner.SpawnWave(i);
+            // Spawn the current wave and get the number of enemies spawned.
+            int spawnedCount = enemySpawner.SpawnWave(i);
+            waveEnemiesRemaining[i] = spawnedCount;
 
-            // Wait until the current wave is cleared or timeBetweenWaves is over to spawn the next wave
-            // Instead of just waiting a fixed time, you might wait for enemiesAlive to hit 0 
-            // or use timeBetweenWaves as a delay before the next wave. For simplicity, we do:
+            // Wait until timeBetweenWaves is over (or the wave is cleared) before spawning the next wave
             if (i < totalWaves - 1)
             {
                 yield return new WaitForSeconds(timeBetweenWaves);
@@ -50,21 +55,26 @@ public class WaveManager : MonoBehaviour
         roundInProgress = false;
     }
 
-    public void EnemyDefeated()
+    /// <summary>
+    /// Called by the Enemy or EnemyDeathHandler, passing in the wave index that enemy belonged to.
+    /// </summary>
+    public void EnemyDefeated(int waveIndex)
     {
-        enemiesAlive--;
-        if (enemiesAlive <= 0)
+        if (waveIndex < 0 || waveIndex >= waveEnemiesRemaining.Length) return;
+
+        waveEnemiesRemaining[waveIndex]--;
+
+        // If there are no more enemies in that wave,
+        // check if it's the last wave to trigger the win condition.
+        if (waveEnemiesRemaining[waveIndex] <= 0)
         {
-            // Check if it was the last wave
-            if (currentWaveIndex == totalWaves - 1)
+            // If this was the last wave
+            if (waveIndex == totalWaves - 1)
             {
                 WinGame();
             }
-            else
-            {
-                // If not the last wave, the next wave will start after timeBetweenWaves passes in the coroutine
-                // or you can handle immediate next wave start here if desired.
-            }
+            // Otherwise, you can decide if you want to do something else,
+            // such as immediately start the next wave (depending on your design).
         }
     }
 
