@@ -1,4 +1,123 @@
+using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using Unity.Collections;
 using UnityEngine;
+
+
+
+enum StatType
+{
+    Area,
+    Vampire,
+    SplitCount,
+    Scatter,
+    Duration,
+    Range,
+    Interval,
+    
+
+}
+
+enum ModifierOperator
+{
+    Sum,
+    Mult
+}
+
+class Stat
+{
+
+    public Stat(StatType nType, float nValue)
+    {
+        type = nType;
+        value = nValue;
+    }
+
+    public StatType type;
+    public float value;
+}
+
+class StatModifier
+{
+    public StatType type;
+    public ModifierOperator opp;
+    public float value;
+
+    public StatModifier(StatType nType, ModifierOperator nOpp, float nValue)
+    {
+        type = nType;
+        opp = nOpp;
+        value = nValue;
+    }
+}
+
+class StatTable
+{
+    Dictionary<StatType, Stat> stats;
+
+    public StatTable(Dictionary<StatType, Stat> baseStats)
+    {
+        this.Initialize();
+
+        IDictionaryEnumerator myEnum =
+                     baseStats.GetEnumerator();
+
+        foreach (var kvp in baseStats) {
+            stats[kvp.Key] = baseStats[kvp.Key];
+        }
+    }
+
+    void Initialize()
+    {
+        stats = new Dictionary<StatType, Stat>();
+
+        foreach (StatType type in System.Enum.GetValues(typeof(StatType)))
+        {
+            stats.Add(type, new Stat(type, 0));
+        }
+    }
+
+    void applyModifier(StatModifier mod)
+    {
+        Stat stat = stats[mod.type];
+
+        switch (mod.opp)
+        {
+            case ModifierOperator.Sum:
+                stat.value += mod.value;
+                break;
+            case ModifierOperator.Mult:
+                stat.value += stat.value * mod.value;
+                break;
+            default:
+                break;
+        }
+    }
+
+    Stat GetStat(StatType type) {
+        return stats[type];
+    }
+
+}
+
+
+abstract class Skill {
+    string name;
+    List<StatModifier> modifiers;
+}
+
+
+class AreaIncrease : Skill {
+    string name = "AreaIncrease";
+
+    List<StatModifier> modifiers = new List<StatModifier> {
+        new StatModifier(StatType.Area, ModifierOperator.Mult, 0.1f)
+    };
+        
+}
+
+
 
 public class Wand : MonoBehaviour
 {
