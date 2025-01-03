@@ -115,26 +115,23 @@ public class Wand : MonoBehaviour
     public Transform towerTransform;
     public GameObject projectilePrefab;
 
-    private StatTable statTable;
+    // Store the base stats in a serializable dictionary or in code here:
+    private Dictionary<StatType, Stat> baseStats = new Dictionary<StatType, Stat>
+    {
+        { StatType.Range,       new Stat(StatType.Range,       5) },
+        { StatType.Interval,    new Stat(StatType.Interval,    0.1f) },
+        { StatType.Damage,      new Stat(StatType.Damage,      10) },
+        { StatType.TravelSpeed, new Stat(StatType.TravelSpeed, 2) },
+    };
 
+    private StatTable statTable;
     private float attackTimer = 0f;
 
     private void Start()
     {
-        statTable = new StatTable(new Dictionary<StatType, Stat> {
-            { StatType.Range, new Stat(StatType.Range, 5) },
-            { StatType.Interval, new Stat(StatType.Interval, 0.1f) },
-            { StatType.Damage, new Stat(StatType.Damage, 10) },
-            { StatType.TravelSpeed, new Stat(StatType.TravelSpeed, 2) },
-        });
-
-        foreach (SkillSO skill in initialSkills)
-        {
-            foreach (StatModifier mod in skill.modifiers)
-            {
-                statTable.ApplyModifier(mod);
-            }
-        }
+        // 1) Initialize the StatTable once at startup.
+        // 2) Immediately recalculate stats with the current skill list.
+        RecalculateStats();
     }
 
     private void Update()
@@ -152,14 +149,57 @@ public class Wand : MonoBehaviour
                     ShootProjectileAt(closestEnemy);
                 }
             }
-
             attackTimer = 0f;
+        }
+    }
+
+    /// <summary>
+    /// Recreates the StatTable from base stats, then applies all current skills' modifiers.
+    /// </summary>
+    public void RecalculateStats()
+    {
+        // Create a fresh StatTable from the base stats
+        statTable = new StatTable(baseStats);
+
+        // Apply each SkillSO in the list
+        foreach (SkillSO skill in initialSkills)
+        {
+            foreach (StatModifier mod in skill.modifiers)
+            {
+                statTable.ApplyModifier(mod);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Call this if the skill list changes at runtime.
+    /// e.g. "AddSkill(myNewSkillSO)" then "RecalculateStats()"
+    /// </summary>
+    /// <param name="skill">The skill to add.</param>
+    public void AddSkill(SkillSO skill)
+    {
+        if (!initialSkills.Contains(skill))
+        {
+            initialSkills.Add(skill);
+            RecalculateStats();
+        }
+    }
+
+    /// <summary>
+    /// Removes a skill from the list, if present, then recalculates.
+    /// </summary>
+    /// <param name="skill">The skill to remove.</param>
+    public void RemoveSkill(SkillSO skill)
+    {
+        if (initialSkills.Contains(skill))
+        {
+            initialSkills.Remove(skill);
+            RecalculateStats();
         }
     }
 
     private Enemy FindClosestEnemy()
     {
-        // Using the new API:
         Enemy[] enemies = FindObjectsByType<Enemy>(FindObjectsSortMode.None);
         Enemy closest = null;
         float closestDistance = Mathf.Infinity;
@@ -179,7 +219,6 @@ public class Wand : MonoBehaviour
         return closest;
     }
 
-
     private void ShootProjectileAt(Enemy target)
     {
         if (projectilePrefab == null || target == null) return;
@@ -192,9 +231,10 @@ public class Wand : MonoBehaviour
             // Calculate direction from the wand to the enemy
             Vector3 direction = (target.transform.position - transform.position).normalized;
 
-            // Initialize the projectile with a direction, damage, and speed
-            var damage = statTable.GetStat(StatType.Damage).value;
-            projectile.Initialize(direction, damage, statTable.GetStat(StatType.TravelSpeed).value);
+            // Initialize the projectile with direction, damage, and speed
+            float damage = statTable.GetStat(StatType.Damage).value;
+            float travelSpeed = statTable.GetStat(StatType.TravelSpeed).value;
+            projectile.Initialize(direction, damage, travelSpeed);
         }
     }
 }
