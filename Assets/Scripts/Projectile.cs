@@ -4,7 +4,7 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     private Vector3 direction;
-    private int damage;
+    private float damage;
     private float speed;
 
     public float maxLifetime = 5f;
@@ -13,7 +13,7 @@ public class Projectile : MonoBehaviour
     // Ensure the projectile's collider is set to "isTrigger = true"
     // and that collision layers allow the projectile to detect enemies.
 
-    public void Initialize(Vector3 direction, int damage, float speed)
+    public void Initialize(Vector3 direction, float damage, float speed)
     {
         this.direction = direction.normalized;
         this.damage = damage;

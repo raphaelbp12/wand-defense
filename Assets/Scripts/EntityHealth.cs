@@ -7,8 +7,8 @@ public class EntityHealth : MonoBehaviour
     public GameObject damageTextPrefab;
     public RectTransform tooltipSpawner;
     private Canvas canvas;
-    public int maxHP;
-    public int currentHP;
+    public float maxHP;
+    public float currentHP;
 
     // Event that gets invoked when the entity dies
     public UnityEvent OnDied;
@@ -23,14 +23,14 @@ public class EntityHealth : MonoBehaviour
     {
         if (healthBarController != null)
         {
-            healthBarController.SetPercentage((float)currentHP / (float)maxHP);
+            healthBarController.SetPercentage(currentHP / maxHP);
         }
     }
 
-    public void TakeDamage(int amount)
+    public void TakeDamage(float amount)
     {
         ShowDamageText(amount, gameObject.tag == "Player" ? Color.red : Color.white);
-        currentHP = Mathf.Max(currentHP - amount, 0);
+        currentHP = Mathf.Max(currentHP - amount, 0f);
         if (currentHP == 0)
         {
             // Trigger death event
@@ -49,7 +49,7 @@ public class EntityHealth : MonoBehaviour
     }
 
 
-    private void ShowDamageText(int damage, Color color)
+    private void ShowDamageText(float damage, Color color)
     {
         // Instantiate the damage text prefab at the enemy's position
         GameObject damageTextObject = Instantiate(damageTextPrefab, tooltipSpawner.localPosition, Quaternion.identity);

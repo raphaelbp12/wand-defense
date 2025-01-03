@@ -6,7 +6,7 @@ using UnityEngine;
 
 
 
-enum StatType
+public enum StatType
 {
     Area,
     Vampire,
@@ -15,17 +15,18 @@ enum StatType
     Duration,
     Range,
     Interval,
-    
-
+    Damage,
+    TravelSpeed,
+    DamageCooldown,
 }
 
-enum ModifierOperator
+public enum ModifierOperator
 {
     Sum,
     Mult
 }
 
-class Stat
+public class Stat
 {
 
     public Stat(StatType nType, float nValue)
@@ -38,7 +39,7 @@ class Stat
     public float value;
 }
 
-class StatModifier
+public class StatModifier
 {
     public StatType type;
     public ModifierOperator opp;
@@ -52,7 +53,7 @@ class StatModifier
     }
 }
 
-class StatTable
+public class StatTable
 {
     Dictionary<StatType, Stat> stats;
 
@@ -60,10 +61,8 @@ class StatTable
     {
         this.Initialize();
 
-        IDictionaryEnumerator myEnum =
-                     baseStats.GetEnumerator();
-
-        foreach (var kvp in baseStats) {
+        foreach (var kvp in baseStats)
+        {
             stats[kvp.Key] = baseStats[kvp.Key];
         }
     }
@@ -78,7 +77,7 @@ class StatTable
         }
     }
 
-    void applyModifier(StatModifier mod)
+    public void ApplyModifier(StatModifier mod)
     {
         Stat stat = stats[mod.type];
 
@@ -95,53 +94,162 @@ class StatTable
         }
     }
 
-    Stat GetStat(StatType type) {
+    public Stat GetStat(StatType type)
+    {
         return stats[type];
     }
 
 }
 
-
-abstract class Skill {
-    string name;
-    List<StatModifier> modifiers;
+public enum SkillEnum
+{
+    IncreaseArea,
+    Vampire,
+    Split,
+    Scatter,
+    IncreaseDuration,
+    IncreaseRange,
+    IncreaseAttackSpeed,
+    IncreaseDamage,
+    IncreaseProjectileSpeed,
+    ReduceCooldown,
 }
 
+public abstract class Skill
+{
+    public string Name { get; protected set; }
+    public SkillEnum SkillEnum { get; protected set; }
+    public List<StatModifier> Modifiers { get; protected set; }
 
-class AreaIncrease : Skill {
-    string name = "AreaIncrease";
-
-    List<StatModifier> modifiers = new List<StatModifier> {
-        new StatModifier(StatType.Area, ModifierOperator.Mult, 0.1f)
-    };
-        
+    protected Skill(string name, SkillEnum skillEnum, List<StatModifier> modifiers)
+    {
+        Name = name;
+        SkillEnum = skillEnum;
+        Modifiers = modifiers;
+    }
 }
 
+public class IncreaseArea : Skill
+{
+    public IncreaseArea()
+        : base(
+            "Increase Area +10%",
+            SkillEnum.IncreaseArea,
+            new List<StatModifier>
+            {
+                new StatModifier(StatType.Area, ModifierOperator.Mult, 0.1f)
+            }
+        )
+    {
+    }
+}
+
+public class IncreaseDamage : Skill
+{
+    public IncreaseDamage()
+        : base(
+            "Increase Damage +50%",
+            SkillEnum.IncreaseDamage,
+            new List<StatModifier>
+            {
+                new StatModifier(StatType.Damage, ModifierOperator.Mult, 0.5f)
+            }
+        )
+    {
+    }
+}
+
+public class IncreaseProjectileSpeed : Skill
+{
+    public IncreaseProjectileSpeed()
+        : base(
+            "Increase Projectile Speed +50%",
+            SkillEnum.IncreaseProjectileSpeed,
+            new List<StatModifier>
+            {
+                new StatModifier(StatType.TravelSpeed, ModifierOperator.Mult, 0.5f)
+            }
+        )
+    {
+    }
+}
+
+public static class SkillFactory
+{
+    public static Skill CreateSkill(SkillEnum skillEnum)
+    {
+        switch (skillEnum)
+        {
+            case SkillEnum.IncreaseArea:
+                return new IncreaseArea();
+            case SkillEnum.IncreaseDamage:
+                return new IncreaseDamage();
+            case SkillEnum.IncreaseProjectileSpeed:
+                return new IncreaseProjectileSpeed();
+            // case SkillEnum.Vampire:
+            //     return new VampireSkill(); // Example
+            // case SkillEnum.Split:
+            //     return new SplitSkill();   // Example
+            // and so on...
+
+            default:
+                // If unrecognized, return null or throw
+                return null;
+        }
+    }
+}
 
 
 public class Wand : MonoBehaviour
 {
+    [SerializeField]
+    public List<SkillEnum> initialSkills = new List<SkillEnum>();
+    private List<Skill> activeSkills = new List<Skill>();
+
     [HideInInspector]
     public Transform towerTransform;
-    public float attackInterval = 2f;
-    public float attackRange = 10f;
-    public int projectileDamage = 10;
     public GameObject projectilePrefab;
-    public float projectileSpeed = 5f;
+
+    private StatTable statTable;
 
     private float attackTimer = 0f;
+
+    private void Start()
+    {
+        statTable = new StatTable(new Dictionary<StatType, Stat> {
+            { StatType.Range, new Stat(StatType.Range, 5) },
+            { StatType.Interval, new Stat(StatType.Interval, 0.1f) },
+            { StatType.Damage, new Stat(StatType.Damage, 10) },
+            { StatType.TravelSpeed, new Stat(StatType.TravelSpeed, 2) },
+        });
+
+        foreach (var skillEnum in initialSkills)
+        {
+            Skill newSkill = SkillFactory.CreateSkill(skillEnum);
+            if (newSkill != null)
+            {
+                activeSkills.Add(newSkill);
+
+                // For each modifier in the skill, apply to our stat table
+                foreach (var modifier in newSkill.Modifiers)
+                {
+                    statTable.ApplyModifier(modifier);
+                }
+            }
+        }
+    }
 
     private void Update()
     {
         attackTimer += Time.deltaTime;
-        if (attackTimer >= attackInterval)
+        if (attackTimer >= statTable.GetStat(StatType.Interval).value)
         {
             // Attempt to find and attack the closest enemy
             Enemy closestEnemy = FindClosestEnemy();
             if (closestEnemy != null)
             {
                 float distance = Vector3.Distance(transform.position, closestEnemy.transform.position);
-                if (distance <= attackRange)
+                if (distance <= statTable.GetStat(StatType.Range).value)
                 {
                     ShootProjectileAt(closestEnemy);
                 }
@@ -187,7 +295,8 @@ public class Wand : MonoBehaviour
             Vector3 direction = (target.transform.position - transform.position).normalized;
 
             // Initialize the projectile with a direction, damage, and speed
-            projectile.Initialize(direction, projectileDamage, projectileSpeed);
+            var damage = statTable.GetStat(StatType.Damage).value;
+            projectile.Initialize(direction, damage, statTable.GetStat(StatType.TravelSpeed).value);
         }
     }
 }
