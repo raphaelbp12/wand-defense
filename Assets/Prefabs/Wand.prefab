@@ -49,12 +49,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8307f21834cdfcf4a84c7a5bf1392922, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  initialSkills:
+  - {fileID: 11400000, guid: f4755521b7d64054886a76cd0b16be63, type: 2}
+  - {fileID: 11400000, guid: f4755521b7d64054886a76cd0b16be63, type: 2}
+  - {fileID: 11400000, guid: f4755521b7d64054886a76cd0b16be63, type: 2}
+  - {fileID: 11400000, guid: 37ce763e9e6fd0b48889979534230608, type: 2}
+  - {fileID: 11400000, guid: 37ce763e9e6fd0b48889979534230608, type: 2}
+  - {fileID: 11400000, guid: 37ce763e9e6fd0b48889979534230608, type: 2}
   towerTransform: {fileID: 0}
-  attackInterval: 1
-  attackRange: 10
-  projectileDamage: 10
   projectilePrefab: {fileID: 5681140562468967878, guid: 11d884faf9ff1ba46a1cce3ea05c8051, type: 3}
-  projectileSpeed: 5
 --- !u!33 &-6897225475920433762
 MeshFilter:
   m_ObjectHideFlags: 0
