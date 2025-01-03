@@ -39,6 +39,7 @@ public class Stat
     public float value;
 }
 
+[System.Serializable]
 public class StatModifier
 {
     public StatType type;
@@ -51,6 +52,9 @@ public class StatModifier
         opp = nOpp;
         value = nValue;
     }
+
+    // A parameterless constructor is handy for Unity's serialization
+    public StatModifier() { }
 }
 
 public class StatTable
@@ -101,110 +105,11 @@ public class StatTable
 
 }
 
-public enum SkillEnum
-{
-    IncreaseArea,
-    Vampire,
-    Split,
-    Scatter,
-    IncreaseDuration,
-    IncreaseRange,
-    IncreaseAttackSpeed,
-    IncreaseDamage,
-    IncreaseProjectileSpeed,
-    ReduceCooldown,
-}
-
-public abstract class Skill
-{
-    public string Name { get; protected set; }
-    public SkillEnum SkillEnum { get; protected set; }
-    public List<StatModifier> Modifiers { get; protected set; }
-
-    protected Skill(string name, SkillEnum skillEnum, List<StatModifier> modifiers)
-    {
-        Name = name;
-        SkillEnum = skillEnum;
-        Modifiers = modifiers;
-    }
-}
-
-public class IncreaseArea : Skill
-{
-    public IncreaseArea()
-        : base(
-            "Increase Area +10%",
-            SkillEnum.IncreaseArea,
-            new List<StatModifier>
-            {
-                new StatModifier(StatType.Area, ModifierOperator.Mult, 0.1f)
-            }
-        )
-    {
-    }
-}
-
-public class IncreaseDamage : Skill
-{
-    public IncreaseDamage()
-        : base(
-            "Increase Damage +50%",
-            SkillEnum.IncreaseDamage,
-            new List<StatModifier>
-            {
-                new StatModifier(StatType.Damage, ModifierOperator.Mult, 0.5f)
-            }
-        )
-    {
-    }
-}
-
-public class IncreaseProjectileSpeed : Skill
-{
-    public IncreaseProjectileSpeed()
-        : base(
-            "Increase Projectile Speed +50%",
-            SkillEnum.IncreaseProjectileSpeed,
-            new List<StatModifier>
-            {
-                new StatModifier(StatType.TravelSpeed, ModifierOperator.Mult, 0.5f)
-            }
-        )
-    {
-    }
-}
-
-public static class SkillFactory
-{
-    public static Skill CreateSkill(SkillEnum skillEnum)
-    {
-        switch (skillEnum)
-        {
-            case SkillEnum.IncreaseArea:
-                return new IncreaseArea();
-            case SkillEnum.IncreaseDamage:
-                return new IncreaseDamage();
-            case SkillEnum.IncreaseProjectileSpeed:
-                return new IncreaseProjectileSpeed();
-            // case SkillEnum.Vampire:
-            //     return new VampireSkill(); // Example
-            // case SkillEnum.Split:
-            //     return new SplitSkill();   // Example
-            // and so on...
-
-            default:
-                // If unrecognized, return null or throw
-                return null;
-        }
-    }
-}
-
-
 public class Wand : MonoBehaviour
 {
+    [Header("Skills")]
     [SerializeField]
-    public List<SkillEnum> initialSkills = new List<SkillEnum>();
-    private List<Skill> activeSkills = new List<Skill>();
+    private List<SkillSO> initialSkills;  // Assigned in Inspector
 
     [HideInInspector]
     public Transform towerTransform;
@@ -223,18 +128,11 @@ public class Wand : MonoBehaviour
             { StatType.TravelSpeed, new Stat(StatType.TravelSpeed, 2) },
         });
 
-        foreach (var skillEnum in initialSkills)
+        foreach (SkillSO skill in initialSkills)
         {
-            Skill newSkill = SkillFactory.CreateSkill(skillEnum);
-            if (newSkill != null)
+            foreach (StatModifier mod in skill.modifiers)
             {
-                activeSkills.Add(newSkill);
-
-                // For each modifier in the skill, apply to our stat table
-                foreach (var modifier in newSkill.Modifiers)
-                {
-                    statTable.ApplyModifier(modifier);
-                }
+                statTable.ApplyModifier(mod);
             }
         }
     }
