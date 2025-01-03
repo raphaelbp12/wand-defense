@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7fc7e7c3f59ecc419902776ff5299dd, type: 3}
   m_Name: IncreaseProjectileSpeedLvl1
   m_EditorClassIdentifier: 
-  skillName: Increase Damage
+  skillName: Increase Projectile Speed
   description: 
   modifiers:
-  - type: 7
+  - type: 8
     opp: 1
     value: 0.5
