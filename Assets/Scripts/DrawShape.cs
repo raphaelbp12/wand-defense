@@ -45,22 +45,6 @@ public class DrawShape : MonoBehaviour
         UpdateMesh();
     }
 
-    void OnValidate()
-    {
-        // This method is called when values are changed in the inspector
-        // Ensures the shape updates in real-time
-        if (!Application.isPlaying)
-        {
-            if (mesh == null)
-            {
-                meshFilter = GetComponent<MeshFilter>();
-                mesh = new Mesh();
-                meshFilter.sharedMesh = mesh;
-            }
-            UpdateMesh();
-        }
-    }
-
     private void Update()
     {
         // Even if we don't need runtime updates, 

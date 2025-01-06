@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: IncreaseProjectileSpeedLvl1
   m_EditorClassIdentifier: 
   skillName: Increase Projectile Speed
-  itemIcon: {fileID: 0}
+  itemIcon: {fileID: -9083362998159298969, guid: cbdeea9b2fce4e84697455f2564084cb, type: 3}
   isStackable: 0
   stackSize: 1
   description: 
