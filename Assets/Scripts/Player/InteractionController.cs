@@ -85,24 +85,6 @@ public class InteractionController : MonoBehaviour
                 }
             }
         }
-        else if (Input.GetMouseButtonDown(1))
-        {
-            var uiElems = GetUIUnderMouse();
-            if (uiElems.Count > 0)
-            {
-                foreach (var uiElem in uiElems)
-                {
-                    switch (uiElem.GetInterceptionType())
-                    {
-                        case InterceptionType.ItemSwap:
-                            movingStack = ((IInventoryInteraction)uiElem).SwapItem(Input.mousePosition, movingStack, InventoryActionType.SecondaryAction);
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            }
-        }
     }
 
     void RefreshCursor()

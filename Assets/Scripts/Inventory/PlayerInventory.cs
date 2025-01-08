@@ -25,13 +25,6 @@ public class PlayerInventory : Inventory
         return returningStack;
     }
 
-    public new ItemStack SecondaryAction(ItemStack stack, int position)
-    {
-        var returningStack = base.SecondaryAction(stack, position);
-        inventoryUI.RefreshSlots();
-        return returningStack;
-    }
-
     public new int AddItems(ItemStack stack)
     {
         var result = base.AddItems(stack);

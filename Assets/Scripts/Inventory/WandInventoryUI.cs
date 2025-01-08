@@ -36,8 +36,6 @@ public class WandInventoryUI : MonoBehaviour,
         {
             if (action == InventoryActionType.PrimaryAction)
                 return currentInventory.PrimaryAction(stack, slotPosition);
-            else if (action == InventoryActionType.SecondaryAction)
-                return currentInventory.SecondaryAction(stack, slotPosition);
         }
 
         return null;

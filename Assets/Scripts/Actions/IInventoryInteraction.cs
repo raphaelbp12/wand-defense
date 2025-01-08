@@ -2,8 +2,7 @@ using UnityEngine;
 
 public enum InventoryActionType
 {
-    PrimaryAction,
-    SecondaryAction
+    PrimaryAction
 }
 
 public interface IInventoryInteraction : IMouseIntercept
