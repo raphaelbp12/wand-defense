@@ -15,12 +15,18 @@ public class InventoryUI : MonoBehaviour, IInventoryInteraction
 
     // Use the unified Inventory class
     Inventory currentInventory;
-    private int inventorySize;
 
     void Awake()
     {
         this.panel = this.gameObject;
         CloseInventory();
+    }
+
+    void Start()
+    {
+        var inventory = new Inventory(50);
+        this.currentInventory = inventory;
+        this.OpenInventory();
     }
 
     public ItemStack SwapItem(Vector2 position, ItemStack stack, InventoryActionType action)
@@ -38,13 +44,11 @@ public class InventoryUI : MonoBehaviour, IInventoryInteraction
         return null;
     }
 
-    public void OpenInventory(Inventory inventory)
+    public void OpenInventory()
     {
         // ...existing code...
         this.isOpen = true;
-        currentInventory = inventory;
-        this.inventorySize = currentInventory.GetSize();
-        EnsureSlots(inventorySize);
+        EnsureSlots(currentInventory.GetSize());
         RefreshSlots();
     }
 
@@ -62,6 +66,8 @@ public class InventoryUI : MonoBehaviour, IInventoryInteraction
         // ...existing code...
         if (currentInventory != null)
         {
+            var inventorySize = currentInventory.GetSize();
+
             panel.transform.GetChild(0).gameObject.SetActive(isOpen);
             panel.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 65 * Mathf.Ceil(inventorySize / 10f) + 25);
             for (var i = 0; i < inventorySize; i++)

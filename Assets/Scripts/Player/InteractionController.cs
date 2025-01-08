@@ -13,29 +13,9 @@ public class InteractionController : MonoBehaviour
     [SerializeField] private GameObject stackCursor;
     private ItemStack movingStack = null;
 
-    [SerializeField] public InventoryUI inventoryPanel;
-    private Inventory inventory;
-
-
-    private bool wasInit = false;
-
     void Start()
     {
-        if (stackCursor != null && inventoryPanel != null)
-        {
-            Init(inventoryPanel);
-        }
-    }
-
-
-    public void Init(InventoryUI panel)
-    {
-        if (wasInit) return;
-
         mainCam = Camera.main;
-        inventoryPanel = panel;
-        inventory = new Inventory(50);
-        inventoryPanel.OpenInventory(inventory);
     }
 
     private void Update()
@@ -43,14 +23,6 @@ public class InteractionController : MonoBehaviour
         RefreshCursor();
 
         IsMouseOverComponent<EntityHealth>(1, 1);
-
-        if (Input.GetKeyDown("e"))
-        {
-            if (inventoryPanel.IsOpen())
-                inventoryPanel.CloseInventory();
-            else
-                inventoryPanel.OpenInventory(inventory);
-        }
 
         if (Input.GetMouseButtonDown(0))
         {
