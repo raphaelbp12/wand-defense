@@ -22,8 +22,6 @@ public class InteractionController : MonoBehaviour
     {
         RefreshCursor();
 
-        IsMouseOverComponent<EntityHealth>(1, 1);
-
         if (Input.GetMouseButtonDown(0))
         {
             var uiElems = GetUIUnderMouse();
@@ -60,44 +58,6 @@ public class InteractionController : MonoBehaviour
         {
             stackCursor.SetActive(false);
         }
-    }
-
-    private bool IsMouseOverComponent<T>(float boxWidth, float boxHeight) where T : Component
-    {
-        boxWidth = 0.90f * boxWidth;
-        boxHeight = 0.90f * boxHeight;
-        // Convert mouse position to world position for 2D OverlapBox
-        Vector2 mouseWorldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-        // Align the mouse position to the nearest whole numbers
-        var worldX = Mathf.FloorToInt(mouseWorldPosition.x) + 0.5f; // Added 0.5 to center the box
-        var worldY = Mathf.FloorToInt(mouseWorldPosition.y) + 0.5f; // Added 0.5 to center the box
-
-        // Define the size of the box
-        Vector2 boxSize = new Vector2(boxWidth, boxHeight);
-
-        // Get all colliders that are within the specified box area around the mouse position
-        Collider2D[] hitColliders = Physics2D.OverlapBoxAll(new Vector2(worldX, worldY), boxSize, 0f);
-
-        // Check each collider in the array for the component T
-        foreach (var hitCollider in hitColliders)
-        {
-            T component = hitCollider.GetComponent<T>();
-
-            // If a collider with the component is found, return true
-            if (component != null)
-            {
-                // Drawing the debug box before returning true for visualization
-                DrawDebugBox(new Vector2(worldX, worldY), boxSize, Color.red, 2f);
-                return true;
-            }
-        }
-
-        // Drawing the debug box in red if no component found, for visualization
-        DrawDebugBox(new Vector2(worldX, worldY), boxSize, Color.green, 2f);
-
-        // If no object with the component was found, return false
-        return false;
     }
 
     private void DrawDebugBox(Vector2 position, Vector2 size, Color color, float duration)
