@@ -13,8 +13,8 @@ public class InteractionController : MonoBehaviour
     [SerializeField] private GameObject stackCursor;
     private ItemStack movingStack = null;
 
-    [SerializeField] public PlayerInventoryUI inventoryPanel;
-    private PlayerInventory playerInventory;
+    [SerializeField] public InventoryUI inventoryPanel;
+    private Inventory inventory;
 
 
     private bool wasInit = false;
@@ -23,18 +23,19 @@ public class InteractionController : MonoBehaviour
     {
         if (stackCursor != null && inventoryPanel != null)
         {
-            Init(stackCursor, inventoryPanel);
+            Init(inventoryPanel);
         }
     }
 
 
-    public void Init(GameObject cursor, PlayerInventoryUI panel)
+    public void Init(InventoryUI panel)
     {
         if (wasInit) return;
 
         mainCam = Camera.main;
-        stackCursor = cursor;
-        playerInventory = new PlayerInventory(50, panel);
+        inventoryPanel = panel;
+        inventory = new Inventory(50);
+        inventoryPanel.OpenInventory(inventory);
     }
 
     private void Update()
@@ -45,27 +46,11 @@ public class InteractionController : MonoBehaviour
 
         if (Input.GetKeyDown("e"))
         {
-            playerInventory.Interact();
+            if (inventoryPanel.IsOpen())
+                inventoryPanel.CloseInventory();
+            else
+                inventoryPanel.OpenInventory(inventory);
         }
-
-
-        if (Input.inputString != "")
-        {
-            int number;
-            bool is_a_number = Int32.TryParse(Input.inputString, out number);
-            if (is_a_number && number >= 0 && number < 10)
-            {
-                int positionSelected = number == 0 ? 9 : number - 1;
-                playerInventory.SelectSlot(positionSelected);
-            }
-        }
-
-        if (Input.mouseScrollDelta.y > 0)
-            playerInventory.SelectNextSlot();
-
-        if (Input.mouseScrollDelta.y < 0)
-            playerInventory.SelectPreviousSlot();
-
 
         if (Input.GetMouseButtonDown(0))
         {

@@ -460,6 +460,7 @@ MonoBehaviour:
   towerTransform: {fileID: 0}
   wandPrefab: {fileID: 8950896102176921670, guid: cff97560d759dbd47b409fdd952858e2, type: 3}
   wandSpawnOffset: {x: 2, y: 0, z: 0}
+  canvasWandInventoryContainer: {fileID: 0}
 --- !u!114 &570702230
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -792,7 +793,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1165803424}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d6e9d4a1fe8d7dc4faab7b0c1b0f8b58, type: 3}
+  m_Script: {fileID: 11500000, guid: 3c987842c923d7444a4c3b06077a375c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   uiSlotPrefab: {fileID: 4030151898225900481, guid: 2ee979afb6c365f4abeafa0d923d830b, type: 3}

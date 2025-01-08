@@ -6,69 +6,99 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class WandInventoryUI : MonoBehaviour,
-    IInventoryInteraction
+public class InventoryUI : MonoBehaviour, IInventoryInteraction
 {
     private GameObject panel;
     private GameObject[] uiSlots;
     public GameObject uiSlotPrefab;
     bool isOpen = false;
 
-    WandInventory currentInventory;
-    const int inventorySize = 20;
+    // Use the unified Inventory class
+    Inventory currentInventory;
+    private int inventorySize;
 
     void Awake()
     {
         this.panel = this.gameObject;
-        uiSlots = new GameObject[20];
-
-        for (var i = 0; i < inventorySize; i++)
-        {
-            uiSlots[i] = Instantiate(uiSlotPrefab, panel.transform.GetChild(0).transform);
-        }
-        this.CloseInventory();
+        CloseInventory();
     }
 
     public ItemStack SwapItem(Vector2 position, ItemStack stack, InventoryActionType action)
     {
+        if (currentInventory == null)
+            return stack;
+        // ...existing code...
         var slotPosition = GetClosestSlot(position);
-        if (slotPosition != -1)
+        if (slotPosition != -1 && action == InventoryActionType.PrimaryAction)
         {
-            if (action == InventoryActionType.PrimaryAction)
-                return currentInventory.PrimaryAction(stack, slotPosition);
+            var returningStack = currentInventory.PrimaryAction(stack, slotPosition);
+            RefreshSlots();
+            return returningStack;
         }
-
         return null;
     }
 
-    public void OpenInventory(WandInventory inventory)
+    public void OpenInventory(Inventory inventory)
     {
+        // ...existing code...
         this.isOpen = true;
         currentInventory = inventory;
+        this.inventorySize = currentInventory.GetSize();
+        EnsureSlots(inventorySize);
         RefreshSlots();
     }
 
     public void CloseInventory()
     {
+        // ...existing code...
         this.isOpen = false;
         currentInventory = null;
-        this.panel.transform.GetChild(0).gameObject.SetActive(this.isOpen);
-        panel.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 0);
+        panel.transform.GetChild(0).gameObject.SetActive(isOpen);
+        // ...existing code...
     }
 
-    public void RefreshSlots()
+    void RefreshSlots()
     {
+        // ...existing code...
         if (currentInventory != null)
         {
-            this.panel.transform.GetChild(0).gameObject.SetActive(this.isOpen);
-            panel.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 65 * Mathf.Ceil((inventorySize) / 10f) + 15);
+            panel.transform.GetChild(0).gameObject.SetActive(isOpen);
+            panel.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 65 * Mathf.Ceil(inventorySize / 10f) + 25);
             for (var i = 0; i < inventorySize; i++)
+            {
                 SetSlot(i, currentInventory.GetStack(i));
+            }
         }
+    }
+
+    void EnsureSlots(int desiredCount)
+    {
+        if (uiSlots != null && uiSlots.Length == desiredCount)
+            return;
+
+        var currentCount = uiSlots != null ? uiSlots.Length : 0;
+        if (desiredCount < currentCount)
+        {
+            for (int i = currentCount - 1; i >= desiredCount; i--)
+            {
+                Destroy(uiSlots[i]);
+            }
+        }
+
+        GameObject[] newSlots = new GameObject[desiredCount];
+        for (int i = 0; i < desiredCount; i++)
+        {
+            if (i < currentCount)
+                newSlots[i] = uiSlots[i];
+            else
+                newSlots[i] = Instantiate(uiSlotPrefab, panel.transform.GetChild(0).transform);
+        }
+        uiSlots = newSlots;
     }
 
     void SetSlot(int index, ItemStack item)
     {
+        // ...existing code...
         if (item != null)
         {
             uiSlots[index].transform.GetChild(0).GetComponent<Image>().sprite = item.GetItem().itemIcon;
@@ -88,11 +118,13 @@ public class WandInventoryUI : MonoBehaviour,
 
     public bool IsOpen()
     {
+        // ...existing code...
         return isOpen;
     }
 
     public int GetClosestSlot(Vector2 position)
     {
+        // ...existing code...
         var slotDistances = uiSlots.Select(x => (x, Vector2.Distance(x.transform.position, position))).ToArray();
         var closestSlot = slotDistances.Aggregate((curMin, x) => x.Item2 < curMin.Item2 ? x : curMin);
 

@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-
 public class Inventory
 {
     protected Slot[] slots;
@@ -13,8 +12,9 @@ public class Inventory
         this.slots = new Slot[slotAmount];
         this.slots = this.slots.Select(i => new Slot()).ToArray();
         this.inventorySize = slotAmount;
+        this.AddItems(new ItemStack(ItemAtlas.instance.increaseDamageLvl1, 1));
+        this.AddItems(new ItemStack(ItemAtlas.instance.increaseProjectileSpeedLvl1, 1));
     }
-
 
     public int AddItems(ItemStack stack)
     {
@@ -51,7 +51,6 @@ public class Inventory
 
         return 0;
     }
-
 
     public int? GetNextEmptySlot(int from = 0)
     {
@@ -101,7 +100,6 @@ public class Inventory
         }
         else
         {
-
             slot.AddQuantity(-quantity);
             return new ItemStack(slot.GetItem(), quantity);
         }
@@ -113,11 +111,6 @@ public class Inventory
         var stack = GetStack(position);
         slots[position].Clear();
         return stack;
-    }
-
-    public List<ItemStack> GetAllStack()
-    {
-        return slots.Select(x => x.GetStack()).ToList();
     }
 
     public ItemStack GetStack(int position)
@@ -160,39 +153,8 @@ public class Inventory
         return returningStack;
     }
 
-    public ItemStack SecondaryAction(ItemStack stack, int position)
+    public int GetSize()
     {
-        ItemStack returningStack = null;
-        // no item received
-        if (stack == null || stack.GetItem() == null)
-        {
-            var selectedStack = this.GetStack(position);
-            if (selectedStack != null)
-                returningStack = this.RemoveItems(selectedStack.GetQuantity() / 2, position);
-        }
-        // item received / no item in the position
-        else if (GetStack(position) == null)
-        {
-            this.AddItems(new ItemStack(stack.GetItem(), 1), position);
-            if (stack.GetQuantity() > 1)
-                returningStack = new ItemStack(stack.GetItem(), stack.GetQuantity() - 1);
-            else
-                returningStack = null;
-        }
-        // item received / different item in position
-        else if (GetStack(position).GetItem() != stack.GetItem())
-        {
-            returningStack = stack;
-        }
-        // item received / equal item in position
-        else
-        {
-            int addedItems = this.AddItems(new ItemStack(stack.GetItem(), 1), position);
-            if (addedItems == stack.GetQuantity())
-                returningStack = null;
-            else
-                returningStack = new ItemStack(stack.GetItem(), stack.GetQuantity() - addedItems);
-        }
-        return returningStack;
+        return inventorySize;
     }
 }

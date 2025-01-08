@@ -7,7 +7,6 @@ public class WandManager : MonoBehaviour
     public Transform towerTransform;
     public Wand wandPrefab;
     public Vector3 wandSpawnOffset;
-    [SerializeField] public WandInventoryUI wandInventoryPanelPrefab;
     [SerializeField] public GameObject canvasWandInventoryContainer;
 
 
