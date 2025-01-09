@@ -14,7 +14,7 @@ public class InventoryUI : MonoBehaviour, IInventoryInteraction
     bool isOpen = false;
 
     // Use the unified Inventory class
-    Inventory currentInventory;
+    private Inventory currentInventory;
 
     void Awake()
     {
@@ -24,12 +24,9 @@ public class InventoryUI : MonoBehaviour, IInventoryInteraction
 
     void Start()
     {
-        var inventory = new Inventory(50);
-        this.currentInventory = inventory;
-        this.OpenInventory();
     }
 
-    public ItemStack SwapItem(Vector2 position, ItemStack stack, InventoryActionType action)
+    public virtual ItemStack SwapItem(Vector2 position, ItemStack stack, InventoryActionType action)
     {
         if (currentInventory == null)
             return stack;
@@ -44,10 +41,11 @@ public class InventoryUI : MonoBehaviour, IInventoryInteraction
         return null;
     }
 
-    public void OpenInventory()
+    public void OpenInventory(Inventory inventory)
     {
         // ...existing code...
         this.isOpen = true;
+        currentInventory = inventory;
         EnsureSlots(currentInventory.GetSize());
         RefreshSlots();
     }

@@ -37,6 +37,11 @@ public class Stat
 
     public StatType type;
     public float value;
+
+    public Stat Copy()
+    {
+        return new Stat(type, value);
+    }
 }
 
 [System.Serializable]
@@ -67,7 +72,7 @@ public class StatTable
 
         foreach (var kvp in baseStats)
         {
-            stats[kvp.Key] = baseStats[kvp.Key];
+            stats[kvp.Key] = baseStats[kvp.Key].Copy();
         }
     }
 
@@ -100,7 +105,7 @@ public class StatTable
 
     public Stat GetStat(StatType type)
     {
-        return stats[type];
+        return stats[type].Copy();
     }
 
 }
@@ -109,7 +114,7 @@ public class Wand : MonoBehaviour
 {
     [Header("Skills")]
     [SerializeField]
-    private List<SkillSO> initialSkills;  // Assigned in Inspector
+    public List<SkillSO> initialSkills;  // Assigned in Inspector
 
     [HideInInspector]
     public Transform towerTransform;
@@ -129,9 +134,6 @@ public class Wand : MonoBehaviour
 
     private void Start()
     {
-        // 1) Initialize the StatTable once at startup.
-        // 2) Immediately recalculate stats with the current skill list.
-        RecalculateStats();
     }
 
     private void Update()
@@ -156,13 +158,13 @@ public class Wand : MonoBehaviour
     /// <summary>
     /// Recreates the StatTable from base stats, then applies all current skills' modifiers.
     /// </summary>
-    public void RecalculateStats()
+    public void RecalculateStats(List<SkillSO> skillSOs)
     {
         // Create a fresh StatTable from the base stats
         statTable = new StatTable(baseStats);
 
         // Apply each SkillSO in the list
-        foreach (SkillSO skill in initialSkills)
+        foreach (SkillSO skill in skillSOs)
         {
             foreach (StatModifier mod in skill.modifiers)
             {
@@ -181,7 +183,7 @@ public class Wand : MonoBehaviour
         if (!initialSkills.Contains(skill))
         {
             initialSkills.Add(skill);
-            RecalculateStats();
+            RecalculateStats(new List<SkillSO>());
         }
     }
 
@@ -194,7 +196,7 @@ public class Wand : MonoBehaviour
         if (initialSkills.Contains(skill))
         {
             initialSkills.Remove(skill);
-            RecalculateStats();
+            RecalculateStats(new List<SkillSO>());
         }
     }
 

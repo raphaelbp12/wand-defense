@@ -8,6 +8,7 @@ public class WandManager : MonoBehaviour
     public Wand wandPrefab;
     public Vector3 wandSpawnOffset;
     [SerializeField] public GameObject canvasWandInventoryContainer;
+    [SerializeField] public WandUI wandUIPrefab;
 
 
     // Removed the spawn call from Start()
@@ -24,5 +25,7 @@ public class WandManager : MonoBehaviour
         Vector3 spawnPosition = towerTransform.position + wandSpawnOffset;
         var currentWand = Instantiate(wandPrefab, spawnPosition, Quaternion.identity);
         currentWand.towerTransform = towerTransform;
+        var wandUI = Instantiate(wandUIPrefab, canvasWandInventoryContainer.transform);
+        wandUI.SetWand(currentWand);
     }
 }

@@ -12,8 +12,6 @@ public class Inventory
         this.slots = new Slot[slotAmount];
         this.slots = this.slots.Select(i => new Slot()).ToArray();
         this.inventorySize = slotAmount;
-        this.AddItems(new ItemStack(ItemAtlas.instance.increaseDamageLvl1, 1));
-        this.AddItems(new ItemStack(ItemAtlas.instance.increaseProjectileSpeedLvl1, 1));
     }
 
     public int AddItems(ItemStack stack)
@@ -113,11 +111,30 @@ public class Inventory
         return stack;
     }
 
+    public bool RemoveAllItems()
+    {
+        for (var i = 0; i < inventorySize; i++)
+        {
+            slots[i].Clear();
+        }
+        return true;
+    }
+
     public ItemStack GetStack(int position)
     {
         if (position >= inventorySize) return null;
 
         return slots[position].GetStack();
+    }
+
+    public List<ItemStack> GetAllStacks()
+    {
+        List<ItemStack> stacks = new List<ItemStack>();
+        for (var i = 0; i < inventorySize; i++)
+        {
+            stacks.Add(slots[i].GetStack());
+        }
+        return stacks;
     }
 
     public ItemStack PrimaryAction(ItemStack stack, int position)
