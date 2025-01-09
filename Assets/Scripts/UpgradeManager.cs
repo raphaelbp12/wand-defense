@@ -3,6 +3,8 @@ using UnityEngine;
 public class UpgradeManager : MonoBehaviour
 {
     public static UpgradeManager Instance;
+    [SerializeField] public InventoryUI inventoryUIPrefab;
+    [SerializeField] public GameObject canvasPlayerInventoryContainer;
 
     [Header("Upgrades")]
     public float baseCoinDropChance = 0.1f;  // Base 10% chance
@@ -15,9 +17,19 @@ public class UpgradeManager : MonoBehaviour
     private void Awake()
     {
         if (Instance == null)
+        {
             Instance = this;
+            InitInventory();
+        }
         else
             Destroy(this);
+    }
+
+    public void InitInventory()
+    {
+        var playerInventory = new Inventory(10);
+        var playerInventoryUI = Instantiate(inventoryUIPrefab, canvasPlayerInventoryContainer.transform);
+        playerInventoryUI.OpenInventory(playerInventory);
     }
 
     public float GetCoinDropChance()

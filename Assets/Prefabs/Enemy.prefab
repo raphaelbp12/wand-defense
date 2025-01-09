@@ -124,6 +124,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   towerTransform: {fileID: 0}
+  waveIndex: 0
 --- !u!114 &5971409565847335760
 MonoBehaviour:
   m_ObjectHideFlags: 0

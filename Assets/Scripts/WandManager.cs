@@ -7,8 +7,9 @@ public class WandManager : MonoBehaviour
     public Transform towerTransform;
     public Wand wandPrefab;
     public Vector3 wandSpawnOffset;
+    [SerializeField] public GameObject canvasWandInventoryContainer;
+    [SerializeField] public WandUI wandUIPrefab;
 
-    private Wand currentWand;
 
     // Removed the spawn call from Start()
     // Now we provide a public method to spawn the wand after tower is assigned.
@@ -22,7 +23,9 @@ public class WandManager : MonoBehaviour
 
         wandSpawnOffset = new Vector3(offsetRadius, 0f, 0f);
         Vector3 spawnPosition = towerTransform.position + wandSpawnOffset;
-        currentWand = Instantiate(wandPrefab, spawnPosition, Quaternion.identity);
+        var currentWand = Instantiate(wandPrefab, spawnPosition, Quaternion.identity);
         currentWand.towerTransform = towerTransform;
+        var wandUI = Instantiate(wandUIPrefab, canvasWandInventoryContainer.transform);
+        wandUI.SetWand(currentWand);
     }
 }
