@@ -80,6 +80,12 @@ public class WaveManager : MonoBehaviour
 
     private void WinGame()
     {
+        if (GlobalData.Instance == null)
+        {
+            Debug.LogError("GlobalData instance not found.");
+            return;
+        }
+        GlobalData.Instance.SaveMetaProgress();
         // Load WinScene
         SceneManager.LoadScene("WinScene");
     }

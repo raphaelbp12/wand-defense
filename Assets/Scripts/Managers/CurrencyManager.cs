@@ -5,9 +5,6 @@ public class CurrencyManager : MonoBehaviour
     public static CurrencyManager Instance;
     public TMPro.TMP_Text goldText;
 
-    [Header("Currency")]
-    public int currentGold = 0;
-
     private UpgradeManager upgradeManager;
 
     private void Awake()
@@ -22,7 +19,7 @@ public class CurrencyManager : MonoBehaviour
     {
         if (goldText != null)
         {
-            goldText.text = currentGold.ToString();
+            goldText.text = GlobalData.Instance.playerGold.ToString();
         }
     }
 
@@ -53,22 +50,22 @@ public class CurrencyManager : MonoBehaviour
 
     public void AddGold(int amount)
     {
-        currentGold += amount;
-        Debug.Log("Gold added. Current gold: " + currentGold);
+        GlobalData.Instance.playerGold += amount;
+        Debug.Log("Gold added. Current gold: " + GlobalData.Instance.playerGold);
         // Update UI if needed
     }
 
     public bool TrySpendGold(int amount)
     {
-        if (currentGold >= amount)
+        if (GlobalData.Instance.playerGold >= amount)
         {
-            currentGold -= amount;
-            Debug.Log("Spent " + amount + " gold. Remaining: " + currentGold);
+            GlobalData.Instance.playerGold -= amount;
+            Debug.Log("Spent " + amount + " gold. Remaining: " + GlobalData.Instance.playerGold);
             // Update UI if needed
             return true;
         }
 
-        Debug.Log("Not enough gold to spend. Current gold: " + currentGold + ", required: " + amount);
+        Debug.Log("Not enough gold to spend. Current gold: " + GlobalData.Instance.playerGold + ", required: " + amount);
         return false;
     }
 }

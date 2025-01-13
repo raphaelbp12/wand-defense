@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7fc7e7c3f59ecc419902776ff5299dd, type: 3}
   m_Name: IncreaseDamageLvl1
   m_EditorClassIdentifier: 
+  <id>k__BackingField: 1
   skillName: Increase Damage
   itemIcon: {fileID: -3753825769889500098, guid: 8535b5870bf72294d97bb80024ff53ec, type: 3}
   isStackable: 0

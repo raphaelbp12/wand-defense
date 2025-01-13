@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -22,19 +23,18 @@ public class WandUI : InventoryUI
         shouldSyncInv = true;
     }
 
-    public void SetWand(Wand wand)
+    public void SetWand(Wand wand, List<SkillSO> savedState)
     {
         this.wand = wand;
         wandInventory = new Inventory(10);
-        PopulateInventory();
+        PopulateInventory(savedState.Count() > 0 ? savedState : wand.initialSkills);
         OpenInventory(wandInventory);
         RecalculateStats();
     }
 
-    public void PopulateInventory()
+    public void PopulateInventory(List<SkillSO> skills)
     {
-
-        foreach (SkillSO skill in wand.initialSkills)
+        foreach (SkillSO skill in skills)
         {
             var itemStack = new ItemStack(skill, 1);
             var slot = wandInventory.AddItems(itemStack);
@@ -67,7 +67,7 @@ public class WandUI : InventoryUI
         RecalculateStats();
         // 3) Optionally do something after
         Debug.Log("[WandUI] SwapItem completed.");
-
+        GlobalData.Instance.SaveWandSkills(wandInventory.GetAllStacks().Where(x => x != null).Select(x => x.GetItem()).ToList());
         return result;
     }
 }
