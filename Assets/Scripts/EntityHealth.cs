@@ -7,24 +7,38 @@ public class EntityHealth : MonoBehaviour
     public GameObject damageTextPrefab;
     public RectTransform tooltipSpawner;
     private Canvas canvas;
-    public float maxHP;
-    public float currentHP;
+    [HideInInspector] public float maxHP;
+    [HideInInspector] public float currentHP { get; private set; }
 
     // Event that gets invoked when the entity dies
     public UnityEvent OnDied;
 
     private void Start()
     {
-        currentHP = maxHP;
         canvas = GetComponentInChildren<Canvas>();
+        if (currentHP == 0)
+        {
+            currentHP = maxHP;
+        }
     }
 
     private void Update()
     {
-        if (healthBarController != null)
+        if (healthBarController != null && maxHP > 0)
         {
             healthBarController.SetPercentage(currentHP / maxHP);
+            healthBarController.SetText(currentHP + "/" + maxHP);
         }
+    }
+
+    public void SetMaxHP(float amount)
+    {
+        maxHP = amount;
+    }
+
+    public void SetCurrentHP(float amount)
+    {
+        currentHP = amount;
     }
 
     public void TakeDamage(float amount)

@@ -15,6 +15,7 @@ public class GlobalData : MonoBehaviour
     public int totalCrystals;
     public bool isNewWandUnlocked;
     public List<SkillSO> wandSkills = new List<SkillSO>();
+    public TowerData TowerData;
 
     private void Awake()
     {
@@ -23,6 +24,7 @@ public class GlobalData : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
             LoadMetaProgress();
+            TowerData = new TowerData(10);
         }
         else
         {
