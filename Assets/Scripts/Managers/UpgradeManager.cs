@@ -6,6 +6,8 @@ public class UpgradeManager : MonoBehaviour
     [SerializeField] public InventoryUI inventoryUIPrefab;
     [SerializeField] public GameObject canvasPlayerInventoryContainer;
 
+    public InventoryUI PlayerInventoryUIInstance;
+
     [Header("Upgrades")]
     public float baseCoinDropChance = 0.1f;  // Base 10% chance
     public int coinDropChanceUpgradeCost = 50;
@@ -27,14 +29,15 @@ public class UpgradeManager : MonoBehaviour
 
     public void InitInventory()
     {
-        var playerInventory = new Inventory(10);
+        var playerInventory = GlobalData.Instance.PlayerInventory;
         var playerInventoryUI = Instantiate(inventoryUIPrefab, canvasPlayerInventoryContainer.transform);
-        playerInventory.AddItems(new ItemStack(ItemAtlas.instance.increaseDamageLvl1, 1));
-        playerInventory.AddItems(new ItemStack(ItemAtlas.instance.increaseDamageLvl1, 1));
-        playerInventory.AddItems(new ItemStack(ItemAtlas.instance.increaseDamageLvl1, 1));
-        playerInventory.AddItems(new ItemStack(ItemAtlas.instance.increaseProjectileSpeedLvl1, 1));
-        playerInventory.AddItems(new ItemStack(ItemAtlas.instance.increaseProjectileSpeedLvl1, 1));
-        playerInventory.AddItems(new ItemStack(ItemAtlas.instance.increaseProjectileSpeedLvl1, 1));
+        PlayerInventoryUIInstance = playerInventoryUI.GetComponent<InventoryUI>();
+        // playerInventory.AddItems(new ItemStack(ItemAtlas.instance.increaseDamageLvl1, 1));
+        // playerInventory.AddItems(new ItemStack(ItemAtlas.instance.increaseDamageLvl1, 1));
+        // playerInventory.AddItems(new ItemStack(ItemAtlas.instance.increaseDamageLvl1, 1));
+        // playerInventory.AddItems(new ItemStack(ItemAtlas.instance.increaseProjectileSpeedLvl1, 1));
+        // playerInventory.AddItems(new ItemStack(ItemAtlas.instance.increaseProjectileSpeedLvl1, 1));
+        // playerInventory.AddItems(new ItemStack(ItemAtlas.instance.increaseProjectileSpeedLvl1, 1));
         playerInventoryUI.OpenInventory(playerInventory);
     }
 

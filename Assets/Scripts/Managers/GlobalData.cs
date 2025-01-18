@@ -14,7 +14,9 @@ public class GlobalData : MonoBehaviour
     // (in practice, you might store more complex data and encode it)
     public int totalCrystals;
     public bool isNewWandUnlocked;
-    public List<SkillSO> wandSkills = new List<SkillSO>();
+    public List<SkillSO> wandSkills { get; private set; } = new List<SkillSO>();
+    public Inventory PlayerInventory { get; private set; }
+
     public TowerData TowerData;
 
     private void Awake()
@@ -25,6 +27,7 @@ public class GlobalData : MonoBehaviour
             DontDestroyOnLoad(gameObject);
             LoadMetaProgress();
             TowerData = new TowerData(10);
+            PlayerInventory = new Inventory(10);
         }
         else
         {
