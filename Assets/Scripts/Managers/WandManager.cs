@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class WandManager : MonoBehaviour
@@ -26,6 +27,6 @@ public class WandManager : MonoBehaviour
         var currentWand = Instantiate(wandPrefab, spawnPosition, Quaternion.identity);
         currentWand.towerTransform = towerTransform;
         var wandUI = Instantiate(wandUIPrefab, canvasWandInventoryContainer.transform);
-        wandUI.SetWand(currentWand);
+        wandUI.SetWand(currentWand, GlobalData.Instance.wandSkills);
     }
 }

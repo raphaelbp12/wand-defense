@@ -2,12 +2,14 @@ using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
 
+[RequireComponent(typeof(GameSceneManager))]
 public class WaveManager : MonoBehaviour
 {
     [Header("Wave Settings")]
     public int totalWaves = 3;
     public float timeBetweenWaves = 5f;
 
+    private GameSceneManager gameSceneManager;
     private EnemySpawner enemySpawner;
     private bool roundInProgress = false;
 
@@ -19,6 +21,7 @@ public class WaveManager : MonoBehaviour
 
     private void Awake()
     {
+        gameSceneManager = GetComponent<GameSceneManager>();
         enemySpawner = GetComponent<EnemySpawner>();
 
         // Initialize array to hold remaining enemy counts per wave.
@@ -71,16 +74,15 @@ public class WaveManager : MonoBehaviour
             // If this was the last wave
             if (waveIndex == totalWaves - 1)
             {
-                WinGame();
+                WinRound();
             }
             // Otherwise, you can decide if you want to do something else,
             // such as immediately start the next wave (depending on your design).
         }
     }
 
-    private void WinGame()
+    private void WinRound()
     {
-        // Load WinScene
-        SceneManager.LoadScene("WinScene");
+        gameSceneManager.WinRound();
     }
 }

@@ -31,6 +31,7 @@ public class GameSceneManager : MonoBehaviour
     private void SpawnTower()
     {
         currentTower = Instantiate(towerPrefab, Vector3.zero, Quaternion.identity);
+        currentTower.ApplyTowerData(GlobalData.Instance.TowerData);
         enemySpawner.centerPoint = currentTower.transform;
 
         TowerDeathHandler deathHandler = currentTower.GetComponent<TowerDeathHandler>();
@@ -67,5 +68,18 @@ public class GameSceneManager : MonoBehaviour
     public void GoToMainMenu()
     {
         SceneManager.LoadScene("MainMenuScene");
+    }
+
+    public void WinRound()
+    {
+        if (GlobalData.Instance == null)
+        {
+            Debug.LogError("GlobalData instance not found.");
+            return;
+        }
+        GlobalData.Instance.SaveMetaProgress();
+        GlobalData.Instance.TowerData.SetCurrentHP(currentTower.GetCurrentHP());
+        // Load WinScene
+        SceneManager.LoadScene("RoundWinScene");
     }
 }

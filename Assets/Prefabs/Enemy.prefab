@@ -94,7 +94,6 @@ MonoBehaviour:
   damageTextPrefab: {fileID: 597673233465828947, guid: b96f4142d33d6d54bb783615cfbe53e3, type: 3}
   tooltipSpawner: {fileID: 5573595660067900540}
   maxHP: 20
-  currentHP: 0
   OnDied:
     m_PersistentCalls:
       m_Calls: []
@@ -291,7 +290,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackInterval: 1
-  baseDamage: 10
+  baseDamage: 1
   attackRange: 1.5
 --- !u!50 &-4574278524632043160
 Rigidbody2D:

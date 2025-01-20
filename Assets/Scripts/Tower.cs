@@ -17,4 +17,16 @@ public class Tower : MonoBehaviour
         // Movement and health are handled by their respective components.
         // Additional enemy-specific logic (e.g., attacking) could go here later.
     }
+
+    public void ApplyTowerData(TowerData towerData)
+    {
+        // Apply tower data to the tower
+        entityHealth.SetMaxHP(towerData.MaxHP);
+        entityHealth.SetCurrentHP(towerData.CurrentHP);
+    }
+
+    public float GetCurrentHP()
+    {
+        return entityHealth.currentHP;
+    }
 }

@@ -25,6 +25,10 @@ public class InventoryUI : MonoBehaviour, IInventoryInteraction
     void Start()
     {
     }
+    public int AddItems(ItemStack stack)
+    {
+        return currentInventory.AddItems(stack);
+    }
 
     public virtual ItemStack SwapItem(Vector2 position, ItemStack stack, InventoryActionType action)
     {
