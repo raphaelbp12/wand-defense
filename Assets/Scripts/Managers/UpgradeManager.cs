@@ -32,12 +32,6 @@ public class UpgradeManager : MonoBehaviour
         var playerInventory = GlobalData.Instance.PlayerInventory;
         var playerInventoryUI = Instantiate(inventoryUIPrefab, canvasPlayerInventoryContainer.transform);
         PlayerInventoryUIInstance = playerInventoryUI.GetComponent<InventoryUI>();
-        // playerInventory.AddItems(new ItemStack(ItemAtlas.instance.increaseDamageLvl1, 1));
-        // playerInventory.AddItems(new ItemStack(ItemAtlas.instance.increaseDamageLvl1, 1));
-        // playerInventory.AddItems(new ItemStack(ItemAtlas.instance.increaseDamageLvl1, 1));
-        // playerInventory.AddItems(new ItemStack(ItemAtlas.instance.increaseProjectileSpeedLvl1, 1));
-        // playerInventory.AddItems(new ItemStack(ItemAtlas.instance.increaseProjectileSpeedLvl1, 1));
-        // playerInventory.AddItems(new ItemStack(ItemAtlas.instance.increaseProjectileSpeedLvl1, 1));
         playerInventoryUI.OpenInventory(playerInventory);
     }
 
