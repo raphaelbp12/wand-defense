@@ -16,8 +16,7 @@ public class EnemySpawner : MonoBehaviour
         {
             Vector3 spawnPosition = GetRandomSpawnPoint();
             Enemy newEnemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
-            newEnemy.towerTransform = centerPoint;
-            newEnemy.waveIndex = waveIndex;
+            newEnemy.Initialize(centerPoint, waveIndex);
 
 
             // Subscribe to enemy death event
