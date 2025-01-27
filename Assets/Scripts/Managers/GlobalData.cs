@@ -7,7 +7,7 @@ public class GlobalData : MonoBehaviour
 
     // Single-run data
     public int[] waveEnemiesRemaining;
-    public int currentWaveIndex;
+    public int currentWaveIndex { get; private set; }
     public int playerGold;
 
     // Example meta progress data
@@ -28,6 +28,7 @@ public class GlobalData : MonoBehaviour
             LoadMetaProgress();
             TowerData = new TowerData(10);
             PlayerInventory = new Inventory(10);
+            ResetSingleRunData();
         }
         else
         {
@@ -39,7 +40,13 @@ public class GlobalData : MonoBehaviour
     public void ResetSingleRunData()
     {
         waveEnemiesRemaining = null;
-        currentWaveIndex = 0;
+        currentWaveIndex = 1;
+    }
+
+    public int IncrementCurrentWaveIndex()
+    {
+        currentWaveIndex++;
+        return currentWaveIndex;
     }
 
     public void SaveWandSkills(List<SkillSO> skills)

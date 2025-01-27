@@ -1,34 +1,78 @@
 using UnityEngine;
+using System.Collections.Generic;
+using System.Collections;
 
 [RequireComponent(typeof(WaveManager), typeof(CurrencyManager))]
 public class EnemySpawner : MonoBehaviour
 {
     [Header("Spawn Settings")]
-    public Enemy enemyPrefab;
-    public int enemiesPerWave = 5;
     public Transform centerPoint;
     public float minSpawnRadius = 5f;
     public float maxSpawnRadius = 10f;
 
+    [Header("Enemy Types")]
+    public List<EnemyTypeDefinition> allEnemyTypes; // Drag multiple SOs here
+
+    [Header("Spawn Behavior")]
+    public bool spawnAllAtOnce = true;
+    public float spawnDuration = 5f;
+
     public int SpawnWave(int waveIndex)
     {
-        for (int i = 0; i < enemiesPerWave; i++)
+        int totalSpawned = 0;
+
+        foreach (var enemyDef in allEnemyTypes)
         {
-            Vector3 spawnPosition = GetRandomSpawnPoint();
-            Enemy newEnemy = Instantiate(enemyPrefab, spawnPosition, Quaternion.identity);
-            newEnemy.Initialize(centerPoint, waveIndex);
+            // Only spawn if waveIndex >= waveStart
+            if (waveIndex >= enemyDef.waveStart)
+            {
+                int count = CalculateEnemyCountForType(enemyDef, waveIndex);
 
+                if (spawnAllAtOnce)
+                {
+                    for (int i = 0; i < count; i++)
+                    {
+                        SpawnSingleEnemy(enemyDef, waveIndex);
+                        totalSpawned++;
+                    }
+                }
+                else
+                {
+                    // If you want them spread out over time
+                    StartCoroutine(SpawnEnemiesOverTime(enemyDef, waveIndex, count));
+                    totalSpawned += count;
+                }
+            }
+        }
 
-            // Subscribe to enemy death event
+        return totalSpawned;
+    }
+
+    private IEnumerator SpawnEnemiesOverTime(EnemyTypeDefinition def, int waveIndex, int count)
+    {
+        float interval = spawnDuration / count;
+        for (int i = 0; i < count; i++)
+        {
+            SpawnSingleEnemy(def, waveIndex);
+            yield return new WaitForSeconds(interval);
+        }
+    }
+
+    private void SpawnSingleEnemy(EnemyTypeDefinition def, int waveIndex)
+    {
+        Vector3 spawnPos = GetRandomSpawnPoint();
+        GameObject enemyObj = Instantiate(def.enemyPrefab, spawnPos, Quaternion.identity);
+        Enemy newEnemy = enemyObj.GetComponent<Enemy>();
+        if (newEnemy != null)
+        {
+            newEnemy.InitializeEnemy(def, waveIndex, centerPoint);
+
             EnemyDeathHandler deathHandler = newEnemy.GetComponent<EnemyDeathHandler>();
             if (deathHandler != null)
             {
                 deathHandler.OnEnemyDied += HandleEnemyDeath;
             }
         }
-
-        // Return how many enemies were spawned
-        return enemiesPerWave;
     }
 
     private Vector3 GetRandomSpawnPoint()
@@ -41,11 +85,17 @@ public class EnemySpawner : MonoBehaviour
         return new Vector3(x, y, z);
     }
 
+    private int CalculateEnemyCountForType(EnemyTypeDefinition def, int waveIndex)
+    {
+        // Example formula, can be anything:
+        return waveIndex + 3;
+    }
+
     private void HandleEnemyDeath(int waveIndex)
     {
-        // Get reference to WaveManager and notify that an enemy is defeated
         WaveManager waveManager = GetComponent<WaveManager>();
         CurrencyManager currencyManager = GetComponent<CurrencyManager>();
+
         if (waveManager != null)
         {
             waveManager.EnemyDefeated(waveIndex);
