@@ -6,9 +6,12 @@ using System.Collections.Generic;
 [RequireComponent(typeof(GameSceneManager))]
 public class WaveManager : MonoBehaviour
 {
+    public TMPro.TMP_Text roundWaveInfoText;
+
     [Header("Wave Settings")]
     public int wavesPerRound = 3;
     private int lastWaveThisRound = 0;
+    private int currentWaveIndex = 0;
     public float timeBetweenWaves = 5f;
 
     private GameSceneManager gameSceneManager;
@@ -28,6 +31,14 @@ public class WaveManager : MonoBehaviour
         waveEnemiesRemaining = new Dictionary<int, int>();
     }
 
+    private void Update()
+    {
+        if (roundWaveInfoText != null)
+        {
+            roundWaveInfoText.text = $"Wave: {GlobalData.Instance.currentWaveIndex}";
+        }
+    }
+
     public void StartRound()
     {
         if (!roundInProgress)
@@ -40,11 +51,9 @@ public class WaveManager : MonoBehaviour
     private IEnumerator RunRound()
     {
         lastWaveThisRound = GlobalData.Instance.currentWaveIndex + wavesPerRound;
-        var currentWaveIndex = GlobalData.Instance.currentWaveIndex;
-        for (int i = currentWaveIndex; i <= lastWaveThisRound; i++)
+        currentWaveIndex = GlobalData.Instance.currentWaveIndex;
+        for (int i = currentWaveIndex; i < lastWaveThisRound; i++)
         {
-            GlobalData.Instance.IncrementCurrentWaveIndex();
-
             // Spawn the current wave and get the number of enemies spawned.
             int spawnedCount = enemySpawner.SpawnWave(i);
             waveEnemiesRemaining[i] = spawnedCount;
@@ -53,6 +62,7 @@ public class WaveManager : MonoBehaviour
             if (i < lastWaveThisRound - 1)
             {
                 yield return new WaitForSeconds(timeBetweenWaves);
+                GlobalData.Instance.IncrementCurrentWaveIndex();
             }
         }
 
@@ -84,6 +94,7 @@ public class WaveManager : MonoBehaviour
 
     private void WinRound()
     {
+        GlobalData.Instance.IncrementCurrentWaveIndex();
         gameSceneManager.WinRound();
     }
 }
