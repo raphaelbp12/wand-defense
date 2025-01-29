@@ -31,7 +31,7 @@ Transform:
   m_GameObject: {fileID: 1109625039461594336}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 654.66376, y: 343.79095, z: 4.253527}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -55,7 +55,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f4755521b7d64054886a76cd0b16be63, type: 2}
   towerTransform: {fileID: 0}
   projectilePrefab: {fileID: 5681140562468967878, guid: 11d884faf9ff1ba46a1cce3ea05c8051, type: 3}
-  currentMana: 0
 --- !u!33 &-6897225475920433762
 MeshFilter:
   m_ObjectHideFlags: 0

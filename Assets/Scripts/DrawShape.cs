@@ -78,7 +78,6 @@ public class DrawShape : MonoBehaviour
         polygonCollider.pathCount = 1;
         Vector2[] polygonPoints2D = Array.ConvertAll(polygonPoints, v => new Vector2(v.x, v.y));
         polygonCollider.SetPath(0, polygonPoints2D);
-        polygonCollider.isTrigger = true;
     }
 
     void DrawHollow(int sides, float outerRadius, float innerRadius)

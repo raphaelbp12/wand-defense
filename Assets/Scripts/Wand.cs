@@ -146,27 +146,25 @@ public class Wand : MonoBehaviour
     private void Update()
     {
         attackTimer += Time.deltaTime;
-        if (attackTimer >= statTable.GetStat(StatType.CooldownPeriod).value && currentMana >= manaPerProjectile)
-        {
-            // Attempt to find and attack the closest enemy
-            Enemy closestEnemy = FindClosestEnemy();
-            if (closestEnemy != null)
-            {
-                float distance = Vector3.Distance(transform.position, closestEnemy.transform.position);
-                if (distance <= statTable.GetStat(StatType.Range).value)
-                {
-                    ShootProjectileAt(closestEnemy);
-                    attackTimer = 0f;
-                    currentMana -= manaPerProjectile;
-                }
-            }
-        }
 
         if (manaBarController != null)
         {
             var manaPercent = currentMana / statTable.GetStat(StatType.Mana).value;
             manaBarController.SetPercentage(manaPercent);
             manaBarController.SetText($"{currentMana}/{statTable.GetStat(StatType.Mana).value}");
+        }
+    }
+
+    public void Shoot(float distanceToEnemy)
+    {
+        if (attackTimer >= statTable.GetStat(StatType.CooldownPeriod).value && currentMana >= manaPerProjectile)
+        {
+            if (distanceToEnemy <= statTable.GetStat(StatType.Range).value)
+            {
+                ShootProjectileAt();
+                attackTimer = 0f;
+                currentMana -= manaPerProjectile;
+            }
         }
     }
 
@@ -226,30 +224,9 @@ public class Wand : MonoBehaviour
         }
     }
 
-    private Enemy FindClosestEnemy()
+    private void ShootProjectileAt()
     {
-        Enemy[] enemies = FindObjectsByType<Enemy>(FindObjectsSortMode.None);
-        Enemy closest = null;
-        float closestDistance = Mathf.Infinity;
-
-        foreach (Enemy enemy in enemies)
-        {
-            if (!enemy) continue;
-
-            float distance = Vector3.Distance(towerTransform.position, enemy.transform.position);
-            if (distance < closestDistance)
-            {
-                closestDistance = distance;
-                closest = enemy;
-            }
-        }
-
-        return closest;
-    }
-
-    private void ShootProjectileAt(Enemy target)
-    {
-        if (projectilePrefab == null || target == null) return;
+        if (projectilePrefab == null) return;
 
         // Instantiate the projectile at the wand's current position
         GameObject projObj = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
@@ -257,7 +234,7 @@ public class Wand : MonoBehaviour
         if (projectile != null)
         {
             // Calculate direction from the wand to the enemy
-            Vector3 direction = (target.transform.position - transform.position).normalized;
+            Vector3 direction = transform.right;
 
             // Initialize the projectile with direction, damage, and speed
             float damage = statTable.GetStat(StatType.Damage).value;
