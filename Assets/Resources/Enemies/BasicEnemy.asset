@@ -15,7 +15,7 @@ MonoBehaviour:
   enemyName: BasicEnemy
   enemyPrefab: {fileID: 6865805822140396439, guid: 069a5111dd864eb4a9df6480cb5e7cf1, type: 3}
   baseHP: 10
-  baseSpeed: 2
+  baseSpeed: 0.5
   hpGrowthPerWave: 2
   speedGrowthPerWave: 0.2
   maxHP: 200

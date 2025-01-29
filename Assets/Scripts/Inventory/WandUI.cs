@@ -30,6 +30,7 @@ public class WandUI : InventoryUI
         PopulateInventory(savedState.Count() > 0 ? savedState : wand.initialSkills);
         OpenInventory(wandInventory);
         RecalculateStats();
+        this.wand.Initialize();
     }
 
     public void PopulateInventory(List<SkillSO> skills)

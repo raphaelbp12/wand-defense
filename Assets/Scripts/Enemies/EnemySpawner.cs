@@ -88,7 +88,7 @@ public class EnemySpawner : MonoBehaviour
     private int CalculateEnemyCountForType(EnemyTypeDefinition def, int waveIndex)
     {
         // Example formula, can be anything:
-        return waveIndex + 3;
+        return waveIndex + 1;
     }
 
     private void HandleEnemyDeath(int waveIndex)

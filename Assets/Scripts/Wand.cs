@@ -14,10 +14,12 @@ public enum StatType
     Scatter,
     Duration,
     Range,
-    Interval,
+    CooldownPeriod,
     Damage,
     TravelSpeed,
     DamageCooldown,
+    Mana,
+    ManaRegen,
 }
 
 public enum ModifierOperator
@@ -112,6 +114,7 @@ public class StatTable
 
 public class Wand : MonoBehaviour
 {
+    public BarController manaBarController;
     [Header("Skills")]
     [SerializeField]
     public List<SkillSO> initialSkills;  // Assigned in Inspector
@@ -123,14 +126,18 @@ public class Wand : MonoBehaviour
     // Store the base stats in a serializable dictionary or in code here:
     private Dictionary<StatType, Stat> baseStats = new Dictionary<StatType, Stat>
     {
-        { StatType.Range,       new Stat(StatType.Range,       5) },
-        { StatType.Interval,    new Stat(StatType.Interval,    0.1f) },
-        { StatType.Damage,      new Stat(StatType.Damage,      10) },
-        { StatType.TravelSpeed, new Stat(StatType.TravelSpeed, 2) },
+        { StatType.Range,           new Stat(StatType.Range,       5) },
+        { StatType.CooldownPeriod,  new Stat(StatType.CooldownPeriod,    0.5f) },
+        { StatType.Damage,          new Stat(StatType.Damage,      10) },
+        { StatType.TravelSpeed,     new Stat(StatType.TravelSpeed, 2) },
+        { StatType.Mana,            new Stat(StatType.Mana, 50) },
+        { StatType.ManaRegen,       new Stat(StatType.ManaRegen, 10) },
     };
 
     private StatTable statTable;
     private float attackTimer = 0f;
+    private float currentMana = 0f;
+    private float manaPerProjectile = 9f;
 
     private void Start()
     {
@@ -139,7 +146,7 @@ public class Wand : MonoBehaviour
     private void Update()
     {
         attackTimer += Time.deltaTime;
-        if (attackTimer >= statTable.GetStat(StatType.Interval).value)
+        if (attackTimer >= statTable.GetStat(StatType.CooldownPeriod).value && currentMana >= manaPerProjectile)
         {
             // Attempt to find and attack the closest enemy
             Enemy closestEnemy = FindClosestEnemy();
@@ -149,10 +156,29 @@ public class Wand : MonoBehaviour
                 if (distance <= statTable.GetStat(StatType.Range).value)
                 {
                     ShootProjectileAt(closestEnemy);
+                    attackTimer = 0f;
+                    currentMana -= manaPerProjectile;
                 }
             }
-            attackTimer = 0f;
         }
+
+        if (manaBarController != null)
+        {
+            var manaPercent = currentMana / statTable.GetStat(StatType.Mana).value;
+            manaBarController.SetPercentage(manaPercent);
+            manaBarController.SetText($"{currentMana}/{statTable.GetStat(StatType.Mana).value}");
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        currentMana += statTable.GetStat(StatType.ManaRegen).value * Time.fixedDeltaTime;
+        currentMana = Mathf.Clamp(currentMana, 0, statTable.GetStat(StatType.Mana).value);
+    }
+
+    public void Initialize()
+    {
+        currentMana = statTable.GetStat(StatType.Mana).value;
     }
 
     /// <summary>

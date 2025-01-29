@@ -12,7 +12,7 @@ public class WaveManager : MonoBehaviour
     public int wavesPerRound = 3;
     private int lastWaveThisRound = 0;
     private int currentWaveIndex = 0;
-    public float timeBetweenWaves = 5f;
+    public float timeBetweenWaves = 10f;
 
     private GameSceneManager gameSceneManager;
     private EnemySpawner enemySpawner;
