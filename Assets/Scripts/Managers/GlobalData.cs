@@ -39,6 +39,7 @@ public class GlobalData : MonoBehaviour
     // Single-run reset
     public void ResetSingleRunData()
     {
+        TowerData.Reset();
         waveEnemiesRemaining = null;
         currentWaveIndex = 1;
     }
