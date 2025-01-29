@@ -17,7 +17,7 @@ GameObject:
   - component: {fileID: -8819213079037988724}
   - component: {fileID: -3700067431255257906}
   - component: {fileID: -3391299825462606706}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Tower
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -235,6 +235,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: EntityCanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 505994832314919756, guid: 29dcd7b8b49ae654b87e791f08600b93, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 2787678695713996092, guid: 29dcd7b8b49ae654b87e791f08600b93, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5606742682057808291, guid: 29dcd7b8b49ae654b87e791f08600b93, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 5967378888875501293, guid: 29dcd7b8b49ae654b87e791f08600b93, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -314,6 +326,14 @@ PrefabInstance:
     - target: {fileID: 5967378888875501293, guid: 29dcd7b8b49ae654b87e791f08600b93, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6838324345880501942, guid: 29dcd7b8b49ae654b87e791f08600b93, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 9031405239399932537, guid: 29dcd7b8b49ae654b87e791f08600b93, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
