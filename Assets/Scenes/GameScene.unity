@@ -637,8 +637,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d444a9632e6ddae489291282adeeb9dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  increaseDamageLvl1: {fileID: 11400000, guid: f4755521b7d64054886a76cd0b16be63, type: 2}
+  ImproveCooldownLvl1: {fileID: 11400000, guid: 9d482b15b113aa341bc4a734d9ec571d, type: 2}
+  IncreaseDamageLvl1: {fileID: 11400000, guid: f4755521b7d64054886a76cd0b16be63, type: 2}
+  IncreaseManaLvl1: {fileID: 11400000, guid: 9cfd30ac3b42f834bafc05a8fe4648d4, type: 2}
+  IncreaseManaRegenLvl1: {fileID: 11400000, guid: 4bf5d8f4739b1be48966b50372a475e9, type: 2}
   increaseProjectileSpeedLvl1: {fileID: 11400000, guid: 37ce763e9e6fd0b48889979534230608, type: 2}
+  IncreaseRangeLvl1: {fileID: 11400000, guid: a56d8e51cb9b99d4b90ca38022b47148, type: 2}
 --- !u!1 &1203066899
 GameObject:
   m_ObjectHideFlags: 0

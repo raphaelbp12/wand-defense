@@ -90,15 +90,15 @@ public class StatTable
 
     public void ApplyModifier(StatModifier mod)
     {
-        Stat stat = stats[mod.type];
+        Stat existingStat = stats[mod.type];
 
         switch (mod.opp)
         {
             case ModifierOperator.Sum:
-                stat.value += mod.value;
+                existingStat.value += mod.value;
                 break;
             case ModifierOperator.Mult:
-                stat.value += stat.value * mod.value;
+                existingStat.value += existingStat.value * mod.value;
                 break;
             default:
                 break;
