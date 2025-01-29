@@ -25,6 +25,7 @@ public class DrawShape : MonoBehaviour
         mesh = new Mesh();
         GetComponent<MeshFilter>().mesh = mesh;
         SetPolygon(polygonSides, polygonOuterRadius, polygonInnerRadius, isFilled);
+        UpdateMesh();
     }
 
     private void OnEnable()
@@ -43,16 +44,6 @@ public class DrawShape : MonoBehaviour
         }
 
         UpdateMesh();
-    }
-
-    private void Update()
-    {
-        // Even if we don't need runtime updates, 
-        // this ensures the shape remains correct if changed via code
-        if (Application.isPlaying)
-        {
-            UpdateMesh();
-        }
     }
 
     void UpdateMesh()
