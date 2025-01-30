@@ -7,7 +7,7 @@ public class Projectile : MonoBehaviour
     private float damage;
     private float speed;
 
-    public float maxLifetime = 5f;
+    public float maxDuration = 5f;
     private float lifetimeTimer = 0f;
 
     // Ensure the projectile's collider is set to "isTrigger = true"
@@ -25,7 +25,7 @@ public class Projectile : MonoBehaviour
         lifetimeTimer += Time.deltaTime;
 
         // Destroy if lifetime exceeded
-        if (lifetimeTimer >= maxLifetime)
+        if (lifetimeTimer >= maxDuration)
         {
             Destroy(gameObject);
             return;

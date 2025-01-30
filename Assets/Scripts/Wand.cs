@@ -1,10 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using Unity.Collections;
+using System.Linq;
 using UnityEngine;
-
-
 
 public enum StatType
 {
@@ -121,7 +117,6 @@ public class Wand : MonoBehaviour
 
     [HideInInspector]
     public Transform towerTransform;
-    public GameObject projectilePrefab;
 
     // Store the base stats in a serializable dictionary or in code here:
     private Dictionary<StatType, Stat> baseStats = new Dictionary<StatType, Stat>
@@ -138,6 +133,8 @@ public class Wand : MonoBehaviour
     private float attackTimer = 0f;
     private float currentMana = 0f;
     private float manaPerProjectile = 9f;
+
+    private List<GameObject> projectilesGO = new List<GameObject>();
 
     private void Start()
     {
@@ -197,6 +194,11 @@ public class Wand : MonoBehaviour
         }
     }
 
+    public void SetActiveSpells(List<SkillSO> activeSpells)
+    {
+        projectilesGO = activeSpells.Select(x => x.projectilePrefab).ToList();
+    }
+
     /// <summary>
     /// Call this if the skill list changes at runtime.
     /// e.g. "AddSkill(myNewSkillSO)" then "RecalculateStats()"
@@ -226,7 +228,9 @@ public class Wand : MonoBehaviour
 
     private void ShootProjectileAt()
     {
-        if (projectilePrefab == null) return;
+        if (projectilesGO == null || projectilesGO.Count == 0) return;
+
+        var projectilePrefab = projectilesGO.First();
 
         // Instantiate the projectile at the wand's current position
         GameObject projObj = Instantiate(projectilePrefab, transform.position, Quaternion.identity);

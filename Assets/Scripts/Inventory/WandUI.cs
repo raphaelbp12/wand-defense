@@ -52,9 +52,12 @@ public class WandUI : InventoryUI
     private void RecalculateStats()
     {
         var allItemStacks = wandInventory.GetAllStacks();
-        var allSkills = allItemStacks.Where(x => x != null).Select(x => x.GetItem()).ToList();
+        var allSupportSpells = allItemStacks.Where(x => x != null).Select(x => x.GetItem()).Where(x => x.isSupportSpell).ToList();
 
-        wand.RecalculateStats(allSkills);
+        wand.RecalculateStats(allSupportSpells);
+
+        var allActiveSpells = allItemStacks.Where(x => x != null).Select(x => x.GetItem()).Where(x => !x.isSupportSpell).ToList();
+        wand.SetActiveSpells(allActiveSpells);
     }
 
     public override ItemStack SwapItem(Vector2 position, ItemStack stack, InventoryActionType action)
