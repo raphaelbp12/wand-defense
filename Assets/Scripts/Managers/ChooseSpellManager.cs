@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -17,9 +18,12 @@ public class ChooseSpellManager : MonoBehaviour
         // load all spells from scriptable objects folder
         var spells = Resources.LoadAll<SkillSO>("Spells");
 
+        List<int> spellOptions = Enumerable.Range(0, spells.Length).ToList();
+        spellOptions = spellOptions.OrderBy(x => Random.value).ToList();
+
         for (int i = 0; i < numberOfSpells; i++)
         {
-            SkillSO randomSpell = spells[Random.Range(0, spells.Length)];
+            SkillSO randomSpell = spells[spellOptions[i]];
             var newButtonGO = Instantiate(spellButtonPrefab, spellButtonContainer.transform);
             var newButton = newButtonGO.GetComponent<Button>();
             var buttonText = newButtonGO.GetComponentInChildren<TMPro.TMP_Text>();
