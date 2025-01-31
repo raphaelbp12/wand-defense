@@ -176,9 +176,11 @@ public class Wand : MonoBehaviour
         supportSpells = skillSOs.Where(x => x.isSupportSpell).ToList();
         var activeSpells = skillSOs.Where(x => !x.isSupportSpell).ToList();
 
+        var statModifier = skillSOs.SelectMany(x => x.modifiers).ToList();
+
         foreach (SkillSO activeSpell in activeSpells)
         {
-            var projectileData = new ProjectileData(activeSpell, skillSOs);
+            var projectileData = new ProjectileData(activeSpell, statModifier);
             projectileDatas.Add(projectileData);
         }
 
