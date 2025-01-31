@@ -106,22 +106,69 @@ public class InventoryUI : MonoBehaviour, IInventoryInteraction
 
     void SetSlot(int index, ItemStack item)
     {
-        // ...existing code...
+        // Get references to UI components
+        Transform slotTransform = uiSlots[index].transform;
+        Image iconImage = slotTransform.GetChild(0).GetComponent<Image>();
+        TextMeshProUGUI quantityText = slotTransform.GetChild(1).GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI initialsText = slotTransform.GetChild(2).GetComponent<TextMeshProUGUI>(); // Add this to your slot prefab
+
         if (item != null)
         {
-            uiSlots[index].transform.GetChild(0).GetComponent<Image>().sprite = item.GetItem().itemIcon;
-            uiSlots[index].transform.GetChild(0).GetComponent<Image>().enabled = true;
-            if (item.GetItem().isStackable)
-                uiSlots[index].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = item.GetQuantity().ToString();
+            SkillSO itemSO = item.GetItem();
+
+            // Handle icon/initials
+            if (itemSO.itemIcon != null)
+            {
+                // Show icon
+                iconImage.sprite = itemSO.itemIcon;
+                iconImage.enabled = true;
+                initialsText.enabled = false;
+            }
             else
-                uiSlots[index].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
+            {
+                // Show initials
+                iconImage.enabled = false;
+                initialsText.text = GetItemInitials(itemSO.skillName);
+                initialsText.enabled = true;
+            }
+
+            // Handle quantity
+            quantityText.text = itemSO.isStackable ? item.GetQuantity().ToString() : "";
         }
         else
         {
-            uiSlots[index].transform.GetChild(0).GetComponent<Image>().sprite = null;
-            uiSlots[index].transform.GetChild(0).GetComponent<Image>().enabled = false;
-            uiSlots[index].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
+            // Clear all elements
+            iconImage.sprite = null;
+            iconImage.enabled = false;
+            initialsText.enabled = false;
+            quantityText.text = "";
         }
+    }
+
+
+    // Add this helper method to generate initials
+    private string GetItemInitials(string itemName)
+    {
+        if (string.IsNullOrEmpty(itemName)) return "??";
+
+        string[] words = itemName.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+        System.Text.StringBuilder initials = new System.Text.StringBuilder();
+
+        foreach (string word in words)
+        {
+            if (word.Length > 0 && char.IsLetter(word[0]))
+            {
+                initials.Append(char.ToUpper(word[0]));
+            }
+        }
+
+        // Return first 3 letters if available
+        return initials.Length switch
+        {
+            0 => "?",
+            1 => itemName.Length > 1 ? $"{initials[0]}{char.ToUpper(itemName[1])}" : initials.ToString(),
+            _ => initials.ToString().Substring(0, Mathf.Min(initials.Length, 3))
+        };
     }
 
     public bool IsOpen()

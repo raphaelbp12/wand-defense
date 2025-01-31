@@ -13,8 +13,12 @@ public class ItemAtlas : MonoBehaviour
 
     #region Support
 
-    [SerializeField] public SkillSO increaseDamageLvl1;
+    [SerializeField] public SkillSO ImproveCooldownLvl1;
+    [SerializeField] public SkillSO IncreaseDamageLvl1;
+    [SerializeField] public SkillSO IncreaseManaLvl1;
+    [SerializeField] public SkillSO IncreaseManaRegenLvl1;
     [SerializeField] public SkillSO increaseProjectileSpeedLvl1;
+    [SerializeField] public SkillSO IncreaseRangeLvl1;
 
     #endregion Support
 

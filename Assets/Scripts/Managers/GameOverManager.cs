@@ -5,6 +5,7 @@ public class GameOverManager : MonoBehaviour
 {
     public void OnRestartButtonClicked()
     {
+        GlobalData.Instance.ResetSingleRunData();
         // Load the gameplay scene again
         SceneManager.LoadScene("GameScene");
     }

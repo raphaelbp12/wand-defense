@@ -1,10 +1,7 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using Unity.Collections;
+using System.Linq;
 using UnityEngine;
-
-
 
 public enum StatType
 {
@@ -14,10 +11,14 @@ public enum StatType
     Scatter,
     Duration,
     Range,
-    Interval,
+    CooldownPeriod,
     Damage,
     TravelSpeed,
     DamageCooldown,
+    Mana,
+    ManaCost,
+    ManaRegen,
+    CastTime,
 }
 
 public enum ModifierOperator
@@ -26,6 +27,7 @@ public enum ModifierOperator
     Mult
 }
 
+[System.Serializable]
 public class Stat
 {
 
@@ -88,15 +90,15 @@ public class StatTable
 
     public void ApplyModifier(StatModifier mod)
     {
-        Stat stat = stats[mod.type];
+        Stat existingStat = stats[mod.type];
 
         switch (mod.opp)
         {
             case ModifierOperator.Sum:
-                stat.value += mod.value;
+                existingStat.value += mod.value;
                 break;
             case ModifierOperator.Mult:
-                stat.value += stat.value * mod.value;
+                existingStat.value += existingStat.value * mod.value;
                 break;
             default:
                 break;
@@ -112,25 +114,25 @@ public class StatTable
 
 public class Wand : MonoBehaviour
 {
+    public BarController manaBarController;
     [Header("Skills")]
     [SerializeField]
     public List<SkillSO> initialSkills;  // Assigned in Inspector
 
     [HideInInspector]
     public Transform towerTransform;
-    public GameObject projectilePrefab;
 
     // Store the base stats in a serializable dictionary or in code here:
-    private Dictionary<StatType, Stat> baseStats = new Dictionary<StatType, Stat>
-    {
-        { StatType.Range,       new Stat(StatType.Range,       5) },
-        { StatType.Interval,    new Stat(StatType.Interval,    0.1f) },
-        { StatType.Damage,      new Stat(StatType.Damage,      10) },
-        { StatType.TravelSpeed, new Stat(StatType.TravelSpeed, 2) },
-    };
+    private Dictionary<StatType, Stat> baseStats = new Dictionary<StatType, Stat> { };
+    public List<Stat> initialStats;
 
     private StatTable statTable;
-    private float attackTimer = 0f;
+    private float attackTimer = Mathf.Infinity;
+    private float currentMana = 0f;
+    private List<ProjectileData> projectileDatas = new List<ProjectileData>();
+
+    private int currentProjectileIndex = 0;
+    private List<SkillSO> supportSpells = new List<SkillSO>();
 
     private void Start()
     {
@@ -139,27 +141,49 @@ public class Wand : MonoBehaviour
     private void Update()
     {
         attackTimer += Time.deltaTime;
-        if (attackTimer >= statTable.GetStat(StatType.Interval).value)
+
+        if (manaBarController != null)
         {
-            // Attempt to find and attack the closest enemy
-            Enemy closestEnemy = FindClosestEnemy();
-            if (closestEnemy != null)
-            {
-                float distance = Vector3.Distance(transform.position, closestEnemy.transform.position);
-                if (distance <= statTable.GetStat(StatType.Range).value)
-                {
-                    ShootProjectileAt(closestEnemy);
-                }
-            }
-            attackTimer = 0f;
+            var manaPercent = currentMana / statTable.GetStat(StatType.Mana).value;
+            manaBarController.SetPercentage(manaPercent);
+            manaBarController.SetText($"{currentMana}/{statTable.GetStat(StatType.Mana).value}");
         }
+    }
+
+    private void FixedUpdate()
+    {
+        currentMana += statTable.GetStat(StatType.ManaRegen).value * Time.fixedDeltaTime;
+        currentMana = Mathf.Clamp(currentMana, 0, statTable.GetStat(StatType.Mana).value);
+    }
+
+    public void Initialize()
+    {
+        foreach (Stat stat in initialStats)
+        {
+            baseStats.Add(stat.type, stat);
+        }
+        statTable = new StatTable(baseStats);
+
+        currentMana = statTable.GetStat(StatType.Mana).value;
     }
 
     /// <summary>
     /// Recreates the StatTable from base stats, then applies all current skills' modifiers.
     /// </summary>
-    public void RecalculateStats(List<SkillSO> skillSOs)
+    public void SkillListChanged(List<SkillSO> skillSOs)
     {
+        projectileDatas = new List<ProjectileData>();
+        supportSpells = skillSOs.Where(x => x.isSupportSpell).ToList();
+        var activeSpells = skillSOs.Where(x => !x.isSupportSpell).ToList();
+
+        var statModifier = skillSOs.SelectMany(x => x.modifiers).ToList();
+
+        foreach (SkillSO activeSpell in activeSpells)
+        {
+            var projectileData = new ProjectileData(activeSpell, statModifier);
+            projectileDatas.Add(projectileData);
+        }
+
         // Create a fresh StatTable from the base stats
         statTable = new StatTable(baseStats);
 
@@ -183,7 +207,7 @@ public class Wand : MonoBehaviour
         if (!initialSkills.Contains(skill))
         {
             initialSkills.Add(skill);
-            RecalculateStats(new List<SkillSO>());
+            SkillListChanged(new List<SkillSO>());
         }
     }
 
@@ -196,34 +220,32 @@ public class Wand : MonoBehaviour
         if (initialSkills.Contains(skill))
         {
             initialSkills.Remove(skill);
-            RecalculateStats(new List<SkillSO>());
+            SkillListChanged(new List<SkillSO>());
         }
     }
 
-    private Enemy FindClosestEnemy()
+    public void Shoot(float distanceToEnemy)
     {
-        Enemy[] enemies = FindObjectsByType<Enemy>(FindObjectsSortMode.None);
-        Enemy closest = null;
-        float closestDistance = Mathf.Infinity;
+        if (projectileDatas == null || projectileDatas.Count == 0) return;
+        var currentProjectileData = projectileDatas[currentProjectileIndex];
 
-        foreach (Enemy enemy in enemies)
+        bool isLastProjectile = currentProjectileIndex == 0;
+        float cooldown = isLastProjectile ? statTable.GetStat(StatType.CooldownPeriod).value : statTable.GetStat(StatType.CastTime).value;
+        bool cooldownPassed = attackTimer >= cooldown;
+        bool hasMana = currentMana >= currentProjectileData.ManaCost;
+
+        if (cooldownPassed && hasMana)
         {
-            if (!enemy) continue;
-
-            float distance = Vector3.Distance(towerTransform.position, enemy.transform.position);
-            if (distance < closestDistance)
-            {
-                closestDistance = distance;
-                closest = enemy;
-            }
+            ShootProjectileAt(currentProjectileData);
+            attackTimer = 0f;
+            currentProjectileIndex = (currentProjectileIndex + 1) % projectileDatas.Count;
         }
-
-        return closest;
     }
 
-    private void ShootProjectileAt(Enemy target)
+    private void ShootProjectileAt(ProjectileData projectileData)
     {
-        if (projectilePrefab == null || target == null) return;
+        if (projectileData == null || projectileData.prefab == null) return;
+        var projectilePrefab = projectileData.prefab;
 
         // Instantiate the projectile at the wand's current position
         GameObject projObj = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
@@ -231,12 +253,15 @@ public class Wand : MonoBehaviour
         if (projectile != null)
         {
             // Calculate direction from the wand to the enemy
-            Vector3 direction = (target.transform.position - transform.position).normalized;
+            float scatterValue = Mathf.Clamp(projectileData.statTable.GetStat(StatType.Scatter).value, 0, 180);
+            float scatterAngle = UnityEngine.Random.Range(-scatterValue, scatterValue);
+
+            Quaternion myRotation = Quaternion.Euler(0f, 0f, scatterAngle);
+            Vector3 direction = myRotation * transform.right;
 
             // Initialize the projectile with direction, damage, and speed
-            float damage = statTable.GetStat(StatType.Damage).value;
-            float travelSpeed = statTable.GetStat(StatType.TravelSpeed).value;
-            projectile.Initialize(direction, damage, travelSpeed);
+            projectile.Initialize(direction, projectileData);
+            currentMana -= projectileData.ManaCost;
         }
     }
 }

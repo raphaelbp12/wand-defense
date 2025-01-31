@@ -30,6 +30,7 @@ public class WandUI : InventoryUI
         PopulateInventory(savedState.Count() > 0 ? savedState : wand.initialSkills);
         OpenInventory(wandInventory);
         RecalculateStats();
+        this.wand.Initialize();
     }
 
     public void PopulateInventory(List<SkillSO> skills)
@@ -51,9 +52,9 @@ public class WandUI : InventoryUI
     private void RecalculateStats()
     {
         var allItemStacks = wandInventory.GetAllStacks();
-        var allSkills = allItemStacks.Where(x => x != null).Select(x => x.GetItem()).ToList();
+        var allItems = allItemStacks.Where(x => x != null).Select(x => x.GetItem()).ToList();
 
-        wand.RecalculateStats(allSkills);
+        wand.SkillListChanged(allItems);
     }
 
     public override ItemStack SwapItem(Vector2 position, ItemStack stack, InventoryActionType action)

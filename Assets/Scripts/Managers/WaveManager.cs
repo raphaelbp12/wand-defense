@@ -1,23 +1,25 @@
 using UnityEngine;
 using System.Collections;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(GameSceneManager))]
 public class WaveManager : MonoBehaviour
 {
+    public TMPro.TMP_Text roundWaveInfoText;
+
     [Header("Wave Settings")]
-    public int totalWaves = 3;
-    public float timeBetweenWaves = 5f;
+    public int wavesPerRound = 3;
+    private int lastWaveThisRound = 0;
+    private int currentWaveIndex = 0;
+    public float timeBetweenWaves = 10f;
 
     private GameSceneManager gameSceneManager;
     private EnemySpawner enemySpawner;
     private bool roundInProgress = false;
 
     // Array that tracks how many enemies remain in each wave.
-    private int[] waveEnemiesRemaining;
-
-    // Keep track of which wave is currently spawning
-    private int currentWaveIndex = -1;
+    private Dictionary<int, int> waveEnemiesRemaining;
 
     private void Awake()
     {
@@ -26,7 +28,15 @@ public class WaveManager : MonoBehaviour
 
         // Initialize array to hold remaining enemy counts per wave.
         // If you have different spawn amounts for each wave, you might fill this array dynamically.
-        waveEnemiesRemaining = new int[totalWaves];
+        waveEnemiesRemaining = new Dictionary<int, int>();
+    }
+
+    private void Update()
+    {
+        if (roundWaveInfoText != null)
+        {
+            roundWaveInfoText.text = $"Wave: {GlobalData.Instance.currentWaveIndex}";
+        }
     }
 
     public void StartRound()
@@ -40,18 +50,19 @@ public class WaveManager : MonoBehaviour
 
     private IEnumerator RunRound()
     {
-        for (int i = 0; i < totalWaves; i++)
+        lastWaveThisRound = GlobalData.Instance.currentWaveIndex + wavesPerRound;
+        currentWaveIndex = GlobalData.Instance.currentWaveIndex;
+        for (int i = currentWaveIndex; i < lastWaveThisRound; i++)
         {
-            currentWaveIndex = i;
-
             // Spawn the current wave and get the number of enemies spawned.
             int spawnedCount = enemySpawner.SpawnWave(i);
             waveEnemiesRemaining[i] = spawnedCount;
 
             // Wait until timeBetweenWaves is over (or the wave is cleared) before spawning the next wave
-            if (i < totalWaves - 1)
+            if (i < lastWaveThisRound - 1)
             {
                 yield return new WaitForSeconds(timeBetweenWaves);
+                GlobalData.Instance.IncrementCurrentWaveIndex();
             }
         }
 
@@ -63,7 +74,7 @@ public class WaveManager : MonoBehaviour
     /// </summary>
     public void EnemyDefeated(int waveIndex)
     {
-        if (waveIndex < 0 || waveIndex >= waveEnemiesRemaining.Length) return;
+        if (!waveEnemiesRemaining.ContainsKey(waveIndex)) return;
 
         waveEnemiesRemaining[waveIndex]--;
 
@@ -72,7 +83,7 @@ public class WaveManager : MonoBehaviour
         if (waveEnemiesRemaining[waveIndex] <= 0)
         {
             // If this was the last wave
-            if (waveIndex == totalWaves - 1)
+            if (waveIndex == lastWaveThisRound - 1)
             {
                 WinRound();
             }
@@ -83,6 +94,7 @@ public class WaveManager : MonoBehaviour
 
     private void WinRound()
     {
+        GlobalData.Instance.IncrementCurrentWaveIndex();
         gameSceneManager.WinRound();
     }
 }

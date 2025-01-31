@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -12,8 +11,11 @@ public class SkillSO : ScriptableObject
     public Sprite itemIcon;
     public bool isStackable;
     public int stackSize;
+    public GameObject projectilePrefab;
+    public bool isSupportSpell => projectilePrefab == null;
     [TextArea]
     public string description;
+    public List<Stat> initialStats;
 
     [Header("Stat Modifiers")]
     public List<StatModifier> modifiers;

@@ -25,4 +25,9 @@ public class TowerData
     {
         MaxHP = amount;
     }
+
+    public void Reset()
+    {
+        CurrentHP = MaxHP;
+    }
 }

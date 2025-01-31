@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 683e92f3cdc49c24996f723c897e8e68, type: 3}
+  m_Name: BasicEnemy
+  m_EditorClassIdentifier: 
+  enemyName: BasicEnemy
+  enemyPrefab: {fileID: 6865805822140396439, guid: 069a5111dd864eb4a9df6480cb5e7cf1, type: 3}
+  baseHP: 10
+  baseSpeed: 0.4
+  hpGrowthPerWave: 1
+  speedGrowthPerWave: 0.01
+  maxHP: 200
+  maxSpeed: 2
+  waveStart: 1

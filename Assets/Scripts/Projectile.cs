@@ -1,36 +1,32 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D))]
 public class Projectile : MonoBehaviour
 {
     private Vector3 direction;
-    private float damage;
-    private float speed;
-
-    public float maxLifetime = 5f;
     private float lifetimeTimer = 0f;
+    private ProjectileData projectileData;
 
-    // Ensure the projectile's collider is set to "isTrigger = true"
-    // and that collision layers allow the projectile to detect enemies.
-
-    public void Initialize(Vector3 direction, float damage, float speed)
+    public void Initialize(Vector3 direction, ProjectileData data)
     {
         this.direction = direction.normalized;
-        this.damage = damage;
-        this.speed = speed;
+        this.projectileData = data;
     }
 
     private void Update()
     {
         lifetimeTimer += Time.deltaTime;
 
+        var maxDuration = projectileData.statTable.GetStat(StatType.Duration).value;
         // Destroy if lifetime exceeded
-        if (lifetimeTimer >= maxLifetime)
+        if (lifetimeTimer >= maxDuration)
         {
             Destroy(gameObject);
             return;
         }
 
+        var speed = projectileData.statTable.GetStat(StatType.TravelSpeed).value;
         // Move in the given direction
         transform.position += direction * speed * Time.deltaTime;
     }
@@ -45,6 +41,7 @@ public class Projectile : MonoBehaviour
             EntityHealth health = enemy.GetComponent<EntityHealth>();
             if (health != null)
             {
+                var damage = projectileData.statTable.GetStat(StatType.Damage).value;
                 health.TakeDamage(damage);
             }
 
