@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -126,9 +127,11 @@ public class Wand : MonoBehaviour
     public List<Stat> initialStats;
 
     private StatTable statTable;
-    private float attackTimer = 0f;
+    private float attackTimer = Mathf.Infinity;
     private float currentMana = 0f;
     private List<ProjectileData> projectileDatas = new List<ProjectileData>();
+
+    private int currentProjectileIndex = 0;
     private List<SkillSO> supportSpells = new List<SkillSO>();
 
     private void Start()
@@ -222,15 +225,18 @@ public class Wand : MonoBehaviour
     public void Shoot(float distanceToEnemy)
     {
         if (projectileDatas == null || projectileDatas.Count == 0) return;
-        var firstProjectileData = projectileDatas.First();
+        var currentProjectileData = projectileDatas[currentProjectileIndex];
 
-        if (attackTimer >= statTable.GetStat(StatType.CooldownPeriod).value && currentMana >= firstProjectileData.ManaCost)
+        bool isLastProjectile = currentProjectileIndex == 0;
+        float cooldown = isLastProjectile ? statTable.GetStat(StatType.CooldownPeriod).value : statTable.GetStat(StatType.CastTime).value;
+        bool cooldownPassed = attackTimer >= cooldown;
+        bool hasMana = currentMana >= currentProjectileData.ManaCost;
+
+        if (cooldownPassed && hasMana)
         {
-            if (distanceToEnemy <= firstProjectileData.Range)
-            {
-                ShootProjectileAt(firstProjectileData);
-                attackTimer = 0f;
-            }
+            ShootProjectileAt(currentProjectileData);
+            attackTimer = 0f;
+            currentProjectileIndex = (currentProjectileIndex + 1) % projectileDatas.Count;
         }
     }
 

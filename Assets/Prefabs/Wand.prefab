@@ -57,11 +57,13 @@ MonoBehaviour:
   towerTransform: {fileID: 0}
   initialStats:
   - type: 6
-    value: 0.5
+    value: 0.8
   - type: 10
     value: 50
   - type: 12
     value: 10
+  - type: 13
+    value: 0.15
 --- !u!33 &-6897225475920433762
 MeshFilter:
   m_ObjectHideFlags: 0
