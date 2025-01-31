@@ -178,7 +178,7 @@ public class Wand : MonoBehaviour
 
         foreach (SkillSO activeSpell in activeSpells)
         {
-            var projectileData = new ProjectileData(activeSpell, supportSpells);
+            var projectileData = new ProjectileData(activeSpell, skillSOs);
             projectileDatas.Add(projectileData);
         }
 
@@ -251,7 +251,11 @@ public class Wand : MonoBehaviour
         if (projectile != null)
         {
             // Calculate direction from the wand to the enemy
-            Vector3 direction = transform.right;
+            float scatterValue = Mathf.Clamp(projectileData.statTable.GetStat(StatType.Scatter).value, 0, 180);
+            float scatterAngle = UnityEngine.Random.Range(-scatterValue, scatterValue);
+
+            Quaternion myRotation = Quaternion.Euler(0f, 0f, scatterAngle);
+            Vector3 direction = myRotation * transform.right;
 
             // Initialize the projectile with direction, damage, and speed
             projectile.Initialize(direction, projectileData);

@@ -10,7 +10,7 @@ public class ProjectileData
     public StatTable statTable { get; private set; }
     public float ManaCost { get { return statTable.GetStat(StatType.ManaCost).value; } }
     public float Range { get { return statTable.GetStat(StatType.Range).value; } }
-    public ProjectileData(SkillSO activeSpell, List<SkillSO> supportSpells)
+    public ProjectileData(SkillSO activeSpell, List<SkillSO> spells)
     {
         foreach (Stat stat in activeSpell.initialStats)
         {
@@ -19,9 +19,9 @@ public class ProjectileData
         this.statTable = new StatTable(baseStats);
         this.prefab = activeSpell.projectilePrefab;
         this.activeSpell = activeSpell;
-        this.supportSpells = supportSpells;
+        this.supportSpells = spells;
 
-        foreach (SkillSO skill in supportSpells)
+        foreach (SkillSO skill in spells)
         {
             foreach (StatModifier mod in skill.modifiers)
             {
