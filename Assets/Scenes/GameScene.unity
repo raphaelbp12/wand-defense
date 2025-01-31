@@ -399,7 +399,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   centerPoint: {fileID: 0}
   minSpawnRadius: 5
-  maxSpawnRadius: 10
+  maxSpawnRadius: 6
   allEnemyTypes:
   - {fileID: 11400000, guid: 1a4bfd10dfb096344bb961994e452994, type: 2}
   spawnAllAtOnce: 1

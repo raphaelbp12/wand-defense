@@ -15,6 +15,7 @@ public class SkillSO : ScriptableObject
     public bool isSupportSpell => projectilePrefab == null;
     [TextArea]
     public string description;
+    public List<Stat> initialStats;
 
     [Header("Stat Modifiers")]
     public List<StatModifier> modifiers;

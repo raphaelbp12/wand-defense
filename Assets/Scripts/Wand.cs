@@ -15,6 +15,7 @@ public enum StatType
     TravelSpeed,
     DamageCooldown,
     Mana,
+    ManaCost,
     ManaRegen,
 }
 
@@ -24,6 +25,7 @@ public enum ModifierOperator
     Mult
 }
 
+[System.Serializable]
 public class Stat
 {
 
@@ -121,10 +123,8 @@ public class Wand : MonoBehaviour
     // Store the base stats in a serializable dictionary or in code here:
     private Dictionary<StatType, Stat> baseStats = new Dictionary<StatType, Stat>
     {
-        { StatType.Range,           new Stat(StatType.Range,       5) },
+        { StatType.Range,  new Stat(StatType.Range,    5f) },
         { StatType.CooldownPeriod,  new Stat(StatType.CooldownPeriod,    0.5f) },
-        { StatType.Damage,          new Stat(StatType.Damage,      10) },
-        { StatType.TravelSpeed,     new Stat(StatType.TravelSpeed, 2) },
         { StatType.Mana,            new Stat(StatType.Mana, 50) },
         { StatType.ManaRegen,       new Stat(StatType.ManaRegen, 10) },
     };
@@ -132,9 +132,10 @@ public class Wand : MonoBehaviour
     private StatTable statTable;
     private float attackTimer = 0f;
     private float currentMana = 0f;
-    private float manaPerProjectile = 9f;
 
     private List<GameObject> projectilesGO = new List<GameObject>();
+    private List<ProjectileData> projectileDatas = new List<ProjectileData>();
+    private List<SkillSO> supportSpells = new List<SkillSO>();
 
     private void Start()
     {
@@ -152,19 +153,6 @@ public class Wand : MonoBehaviour
         }
     }
 
-    public void Shoot(float distanceToEnemy)
-    {
-        if (attackTimer >= statTable.GetStat(StatType.CooldownPeriod).value && currentMana >= manaPerProjectile)
-        {
-            if (distanceToEnemy <= statTable.GetStat(StatType.Range).value)
-            {
-                ShootProjectileAt();
-                attackTimer = 0f;
-                currentMana -= manaPerProjectile;
-            }
-        }
-    }
-
     private void FixedUpdate()
     {
         currentMana += statTable.GetStat(StatType.ManaRegen).value * Time.fixedDeltaTime;
@@ -179,8 +167,18 @@ public class Wand : MonoBehaviour
     /// <summary>
     /// Recreates the StatTable from base stats, then applies all current skills' modifiers.
     /// </summary>
-    public void RecalculateStats(List<SkillSO> skillSOs)
+    public void SkillListChanged(List<SkillSO> skillSOs)
     {
+        projectileDatas = new List<ProjectileData>();
+        supportSpells = skillSOs.Where(x => x.isSupportSpell).ToList();
+        var activeSpells = skillSOs.Where(x => !x.isSupportSpell).ToList();
+
+        foreach (SkillSO activeSpell in activeSpells)
+        {
+            var projectileData = new ProjectileData(activeSpell, supportSpells);
+            projectileDatas.Add(projectileData);
+        }
+
         // Create a fresh StatTable from the base stats
         statTable = new StatTable(baseStats);
 
@@ -194,11 +192,6 @@ public class Wand : MonoBehaviour
         }
     }
 
-    public void SetActiveSpells(List<SkillSO> activeSpells)
-    {
-        projectilesGO = activeSpells.Select(x => x.projectilePrefab).ToList();
-    }
-
     /// <summary>
     /// Call this if the skill list changes at runtime.
     /// e.g. "AddSkill(myNewSkillSO)" then "RecalculateStats()"
@@ -209,7 +202,7 @@ public class Wand : MonoBehaviour
         if (!initialSkills.Contains(skill))
         {
             initialSkills.Add(skill);
-            RecalculateStats(new List<SkillSO>());
+            SkillListChanged(new List<SkillSO>());
         }
     }
 
@@ -222,15 +215,29 @@ public class Wand : MonoBehaviour
         if (initialSkills.Contains(skill))
         {
             initialSkills.Remove(skill);
-            RecalculateStats(new List<SkillSO>());
+            SkillListChanged(new List<SkillSO>());
         }
     }
 
-    private void ShootProjectileAt()
+    public void Shoot(float distanceToEnemy)
     {
-        if (projectilesGO == null || projectilesGO.Count == 0) return;
+        if (projectileDatas == null || projectileDatas.Count == 0) return;
+        var firstProjectileData = projectileDatas.First();
 
-        var projectilePrefab = projectilesGO.First();
+        if (attackTimer >= statTable.GetStat(StatType.CooldownPeriod).value && currentMana >= firstProjectileData.ManaCost)
+        {
+            if (distanceToEnemy <= firstProjectileData.Range)
+            {
+                ShootProjectileAt(firstProjectileData);
+                attackTimer = 0f;
+            }
+        }
+    }
+
+    private void ShootProjectileAt(ProjectileData projectileData)
+    {
+        if (projectileData == null || projectileData.prefab == null) return;
+        var projectilePrefab = projectileData.prefab;
 
         // Instantiate the projectile at the wand's current position
         GameObject projObj = Instantiate(projectilePrefab, transform.position, Quaternion.identity);
@@ -241,9 +248,8 @@ public class Wand : MonoBehaviour
             Vector3 direction = transform.right;
 
             // Initialize the projectile with direction, damage, and speed
-            float damage = statTable.GetStat(StatType.Damage).value;
-            float travelSpeed = statTable.GetStat(StatType.TravelSpeed).value;
-            projectile.Initialize(direction, damage, travelSpeed);
+            projectile.Initialize(direction, projectileData);
+            currentMana -= projectileData.ManaCost;
         }
     }
 }

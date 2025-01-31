@@ -19,4 +19,15 @@ MonoBehaviour:
   stackSize: 1
   projectilePrefab: {fileID: 5681140562468967878, guid: 11d884faf9ff1ba46a1cce3ea05c8051, type: 3}
   description: 
+  initialStats:
+  - type: 5
+    value: 5
+  - type: 11
+    value: 5
+  - type: 7
+    value: 10
+  - type: 8
+    value: 4
+  - type: 4
+    value: 3
   modifiers: []
