@@ -17,6 +17,7 @@ public enum StatType
     Mana,
     ManaCost,
     ManaRegen,
+    CastTime,
 }
 
 public enum ModifierOperator
@@ -121,19 +122,12 @@ public class Wand : MonoBehaviour
     public Transform towerTransform;
 
     // Store the base stats in a serializable dictionary or in code here:
-    private Dictionary<StatType, Stat> baseStats = new Dictionary<StatType, Stat>
-    {
-        { StatType.Range,  new Stat(StatType.Range,    5f) },
-        { StatType.CooldownPeriod,  new Stat(StatType.CooldownPeriod,    0.5f) },
-        { StatType.Mana,            new Stat(StatType.Mana, 50) },
-        { StatType.ManaRegen,       new Stat(StatType.ManaRegen, 10) },
-    };
+    private Dictionary<StatType, Stat> baseStats = new Dictionary<StatType, Stat> { };
+    public List<Stat> initialStats;
 
     private StatTable statTable;
     private float attackTimer = 0f;
     private float currentMana = 0f;
-
-    private List<GameObject> projectilesGO = new List<GameObject>();
     private List<ProjectileData> projectileDatas = new List<ProjectileData>();
     private List<SkillSO> supportSpells = new List<SkillSO>();
 
@@ -161,6 +155,12 @@ public class Wand : MonoBehaviour
 
     public void Initialize()
     {
+        foreach (Stat stat in initialStats)
+        {
+            baseStats.Add(stat.type, stat);
+        }
+        statTable = new StatTable(baseStats);
+
         currentMana = statTable.GetStat(StatType.Mana).value;
     }
 

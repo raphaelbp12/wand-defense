@@ -55,6 +55,13 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1798e8a7670027e4f8ca82d97936ccb3, type: 2}
   - {fileID: 11400000, guid: a9644ce7fa5d6f849ad777a2ab6f9338, type: 2}
   towerTransform: {fileID: 0}
+  initialStats:
+  - type: 6
+    value: 0.5
+  - type: 10
+    value: 50
+  - type: 12
+    value: 10
 --- !u!33 &-6897225475920433762
 MeshFilter:
   m_ObjectHideFlags: 0
